@@ -170,10 +170,11 @@ const save = ()=>{ try{ localStorage.setItem(KEY, JSON.stringify([...done])); }c
 const saveCollapse = ()=>{ try{ localStorage.setItem(COLLAPSE_KEY, JSON.stringify([...collapsed])); }catch(e){} };
 
 function linkFor(u){
-  if(!baseUrl) return u;
-  let b = baseUrl.replace(/\/+$/,'');
-  // If Pages-style, swap .md for .html (Jekyll renders md->html)
-  return b + '/' + u;
+  // map the topic's source .md path to its rendered .html detail page,
+  // keeping the #anchor so it scrolls to the exact topic
+  const html = u.replace(/\.md(#|$)/, '.html$1');
+  if(baseUrl) return baseUrl.replace(/\/+$/,'') + '/' + html;
+  return html; // relative path works on GitHub Pages and when opened locally
 }
 
 function render(){
@@ -270,8 +271,16 @@ $('#exportBtn').addEventListener('click',()=>{
   navigator.clipboard?.writeText(text).then(()=>toast('Progress copied to clipboard'),()=>prompt('Copy your progress:',text));
 });
 const base=$('#baseUrl'); base.value=baseUrl;
-base.addEventListener('input',()=>{baseUrl=base.value.trim();localStorage.setItem(BASEKEY,baseUrl);render();});
+base.addEventListener('input',()=>{baseUrl=base.value.trim();localStorage.setItem(BASEKEY,baseUrl);render();fixFooter();});
 
+function fixFooter(){
+  const a=document.querySelector('footer a'); if(!a) return;
+  if(baseUrl){ a.href=baseUrl.replace(/\/+$/,'')+'/README.md'; return; }
+  const h=location.hostname, parts=location.pathname.split('/').filter(Boolean);
+  if(h.endsWith('github.io')){ a.href=`https://github.com/${h.split('.')[0]}/${parts[0]||''}#readme`; }
+  else { a.href='README.md'; }
+}
+fixFooter();
 render();
 </script>
 </body>

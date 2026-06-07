@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 12 — Performance &amp; Optimization · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 12 — Performance &amp; Optimization</h1>
+<p>Senior interviews probe whether you can <em>diagnose</em> and <em>fix</em> slowness, not just write features. Know the tools and the common culprits.</p>
+<hr>
+<h2 id="121-instruments-time-profiler-allocations-leaks-core-animation">12.1 Instruments (Time Profiler, Allocations, Leaks, Core Animation)</h2>
+<p><strong>Summary (easy):</strong> Instruments is Xcode's profiling suite. Time Profiler finds slow code; Allocations/Leaks find memory growth and cycles; Core Animation/Animation Hitches find dropped frames; Energy Log finds battery drains.</p>
+<p><strong>Example (workflow):</strong></p>
+<pre class="code" data-lang="text"><code>Product ▸ Profile (⌘I) → pick Time Profiler → record → find the hot stack frames</code></pre>
+<p><strong>Interview angle:</strong> Be able to describe a real debugging session: "users reported jank → I ran Core Animation, saw 12ms+ frames, traced it to image decoding on the main thread."</p>
+<p><strong>Resources:</strong> Apple — <em>Instruments</em>; WWDC "Optimize app launch / Demystify and eliminate hitches".</p>
+<hr>
+<h2 id="122-main-thread-hygiene--avoiding-blocking">12.2 Main Thread Hygiene &amp; Avoiding Blocking</h2>
+<p><strong>Summary (easy):</strong> The main thread renders UI ~60–120 times/second. Any heavy work there (parsing, image decode, disk/network) causes dropped frames. Move it to a background queue/task and hop back to main only for UI.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>Task.detached { let img = await decode(data); await MainActor.run { imageView.image = img } }</code></pre>
+<p><strong>Interview angle:</strong> Know the frame budget (~16ms at 60fps, ~8ms at 120fps). Use Main Thread Checker. This ties directly into Phase 4 (concurrency).</p>
+<p><strong>Resources:</strong> WWDC "Eliminate animation hitches"; Apple performance docs.</p>
+<hr>
+<h2 id="123-listcollection-performance-reuse-prefetching-sizing">12.3 List/Collection Performance (reuse, prefetching, sizing)</h2>
+<p><strong>Summary (easy):</strong> Smooth scrolling needs cheap cells: reuse cells, avoid heavy work in <code>cellForRow</code>, cache row heights, and use prefetching/diffable data sources. In SwiftUI, keep <code>body</code> light and give rows stable identity.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func collectionView(_ cv: UICollectionView, prefetchItemsAt paths: [IndexPath]) {
+    paths.forEach { imageLoader.prefetch(urls[$0.item]) }
+}</code></pre>
+<p><strong>Interview angle:</strong> "Your feed stutters when scrolling — how do you fix it?" Walk through profiling → offload decode → prefetch → cache heights.</p>
+<p><strong>Resources:</strong> WWDC collection view performance sessions; Apple table view best practices.</p>
+<hr>
+<h2 id="124-image--asset-optimization">12.4 Image &amp; Asset Optimization</h2>
+<p><strong>Summary (easy):</strong> Images are a top source of memory and CPU cost. Downsample to the display size before showing, decode off the main thread, use appropriate formats (HEIC), and cache decoded images.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code><span class="cm">// Downsample with ImageIO instead of UIImage(contentsOfFile:)</span>
+let opts = [kCGImageSourceThumbnailMaxPixelSize: maxDimension] as CFDictionary</code></pre>
+<p><strong>Interview angle:</strong> Know that a "small" JPEG can balloon in memory once decoded (width × height × 4 bytes). Downsampling is the fix.</p>
+<p><strong>Resources:</strong> WWDC18 "Image and Graphics Best Practices".</p>
+<hr>
+<h2 id="125-app-launch-time-optimization">12.5 App Launch Time Optimization</h2>
+<p><strong>Summary (easy):</strong> Launch = pre-main (dynamic linking, static initializers) + post-main (your <code>didFinishLaunching</code> and first frame). Reduce dynamic frameworks, defer non-critical work, and avoid blocking the first frame.</p>
+<p><strong>Example (concept):</strong></p>
+<pre class="code" data-lang="swift"><code><span class="cm">// Defer analytics/SDK init off the launch critical path</span>
+DispatchQueue.main.async { Analytics.start() }</code></pre>
+<p><strong>Interview angle:</strong> Know the target (sub-400ms feel), how to measure with the App Launch instrument, and that too many dynamic frameworks slow pre-main.</p>
+<p><strong>Resources:</strong> WWDC "Optimize App Launch"; Apple launch time docs.</p>
+<hr>
+<h2 id="126-build-time--compiler-optimization">12.6 Build Time &amp; Compiler Optimization</h2>
+<p><strong>Summary (easy):</strong> Slow builds hurt productivity. Reduce type-inference complexity, break up huge files, use modular targets, and understand Whole Module Optimization (WMO) for release builds. The <code>-Onone</code> (debug) vs <code>-O</code> (release) settings matter.</p>
+<p><strong>Example (concept):</strong></p>
+<pre class="code" data-lang="text"><code><span class="cm">// Add -warn-long-function-bodies and -warn-long-expression-type-checking to find slow-to-compile code</span></code></pre>
+<p><strong>Interview angle:</strong> Mention measuring with build timing summaries and splitting modules to enable parallel/incremental builds.</p>
+<p><strong>Resources:</strong> WWDC "Demystify Swift performance"; Swift compiler optimization docs.</p>
+<div class="pagenav"><a class="nav-btn" href="11-testing.html">← Previous phase</a><a class="nav-btn" href="13-lifecycle-tooling-release.html">Next phase →</a></div>
+</div>
+</body>
+</html>

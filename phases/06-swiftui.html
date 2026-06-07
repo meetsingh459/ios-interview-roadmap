@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 6 — SwiftUI · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 6 — SwiftUI</h1>
+<p>Most new iOS work is SwiftUI, so interviewers test data flow and how it differs from UIKit's imperative model. The state-management property wrappers are the heart of it.</p>
+<hr>
+<h2 id="61-declarative-ui-the-view-protocol--body">6.1 Declarative UI, the View protocol &amp; body</h2>
+<p><strong>Summary (easy):</strong> In SwiftUI you <em>describe</em> what the UI should look like for a given state, and the framework figures out the changes. A <code>View</code> is a value type with a <code>body</code> that returns more views.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>struct Greeting: View {
+    let name: String
+    var body: some View { Text("Hi, \(name)") }
+}</code></pre>
+<p><strong>Interview angle:</strong> Explain "declarative vs imperative." Views are cheap structs recreated often — never put expensive work in <code>body</code>.</p>
+<p><strong>Resources:</strong> Apple — <em>SwiftUI Tutorials</em>; Hacking with Swift — "100 Days of SwiftUI".</p>
+<hr>
+<h2 id="62-state--binding">6.2 @State &amp; @Binding</h2>
+<p><strong>Summary (easy):</strong> <code>@State</code> is a view's own private, mutable source of truth (value types). <code>@Binding</code> is a <em>reference</em> to state owned elsewhere, letting a child read/write the parent's value.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>struct Parent: View {
+    @State private var on = false
+    var body: some View { Toggle("On", isOn: $on) }  <span class="cm">// $on is a Binding</span>
+}</code></pre>
+<p><strong>Interview angle:</strong> <code>$</code> gives the projected value (a Binding). Use <code>@State</code> for simple, local, value-type state only.</p>
+<p><strong>Resources:</strong> Apple — <em>Managing User Interface State</em>; Hacking with Swift state articles.</p>
+<hr>
+<h2 id="63-stateobject-vs-observedobject-vs-environmentobject">6.3 @StateObject vs @ObservedObject vs @EnvironmentObject</h2>
+<p><strong>Summary (easy):</strong> For class-based view models conforming to <code>ObservableObject</code>: <code>@StateObject</code> creates and <em>owns</em> the object (survives view redraws); <code>@ObservedObject</code> references one created elsewhere; <code>@EnvironmentObject</code> reads one injected into the environment.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>class VM: ObservableObject { @Published var count = 0 }
+struct Screen: View {
+    @StateObject private var vm = VM()   <span class="cm">// owner creates it here</span>
+    var body: some View { Text("\(vm.count)") }
+}</code></pre>
+<p><strong>Interview angle:</strong> The classic bug: using <code>@ObservedObject</code> to <em>create</em> a view model → it gets recreated on each redraw and loses state. Use <code>@StateObject</code> to own it.</p>
+<p><strong>Resources:</strong> Apple docs; SwiftLee — "StateObject vs ObservedObject".</p>
+<hr>
+<h2 id="64-the-observation-framework-observable-ios-17">6.4 The Observation framework (@Observable, iOS 17+)</h2>
+<p><strong>Summary (easy):</strong> <code>@Observable</code> (the macro-based Observation framework) replaces <code>ObservableObject</code>/<code>@Published</code>. Views automatically track only the properties they actually read, improving performance and removing boilerplate.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>@Observable class VM { var count = 0 }
+struct Screen: View {
+    @State private var vm = VM()        <span class="cm">// @State now holds the @Observable</span>
+    var body: some View { Text("\(vm.count)") }
+}</code></pre>
+<p><strong>Interview angle:</strong> Know <em>why</em> it's better: fine-grained dependency tracking → fewer view updates than <code>@Published</code> (which invalidates on any change).</p>
+<p><strong>Resources:</strong> WWDC23 "Discover Observation in SwiftUI"; Apple — <em>Observation</em>.</p>
+<hr>
+<h2 id="65-environment--dependency-injection-in-swiftui">6.5 @Environment &amp; Dependency Injection in SwiftUI</h2>
+<p><strong>Summary (easy):</strong> <code>@Environment</code> reads system or custom values passed down the view tree (color scheme, locale, dismiss action, custom keys). It's SwiftUI's built-in dependency injection.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>struct Row: View {
+    @Environment(\.colorScheme) var scheme
+    @Environment(\.dismiss) var dismiss
+    var body: some View { Button("Close") { dismiss() } }
+}</code></pre>
+<p><strong>Interview angle:</strong> Know how to define a custom <code>EnvironmentKey</code> to inject a service app-wide.</p>
+<p><strong>Resources:</strong> Apple — <em>Environment</em>; Point-Free dependency injection discussions.</p>
+<hr>
+<h2 id="66-layout-system-stacks-geometryreader-alignment-layout-protocol">6.6 Layout System (stacks, GeometryReader, alignment, layout protocol)</h2>
+<p><strong>Summary (easy):</strong> SwiftUI lays out by a parent proposing a size, the child choosing its size, and the parent positioning it. <code>HStack/VStack/ZStack</code> stack views; <code>GeometryReader</code> exposes the available space; the <code>Layout</code> protocol (iOS 16) builds custom layouts.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>GeometryReader { geo in
+    Rectangle().frame(width: geo.size.width * 0.5)
+}</code></pre>
+<p><strong>Interview angle:</strong> Explain the "parent proposes, child decides" model — it's the key to debugging unexpected sizes.</p>
+<p><strong>Resources:</strong> WWDC22 "Compose custom layouts with SwiftUI"; objc.io "Thinking in SwiftUI".</p>
+<hr>
+<h2 id="67-lists-foreach--identifiable">6.7 Lists, ForEach &amp; Identifiable</h2>
+<p><strong>Summary (easy):</strong> <code>List</code> and <code>ForEach</code> render collections. Each element needs a stable identity (via <code>Identifiable</code> or a <code>id:</code> key path) so SwiftUI can animate insert/move/delete correctly.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>List(items) { item in Text(item.title) }   <span class="cm">// items: [Item] where Item: Identifiable</span></code></pre>
+<p><strong>Interview angle:</strong> Using array indices as IDs causes glitches when the list mutates — explain why stable IDs matter.</p>
+<p><strong>Resources:</strong> Apple — <em>Lists</em>; Hacking with Swift list articles.</p>
+<hr>
+<h2 id="68-navigation-navigationstack--navigationpath">6.8 Navigation (NavigationStack &amp; NavigationPath)</h2>
+<p><strong>Summary (easy):</strong> <code>NavigationStack</code> (iOS 16+) drives push/pop with a data-driven path, enabling programmatic and deep navigation. <code>navigationDestination</code> maps a value type to a destination view.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>NavigationStack(path: $path) {
+    List(items) { NavigationLink(item.name, value: item) }
+        .navigationDestination(for: Item.self) { DetailView($0) }
+}</code></pre>
+<p><strong>Interview angle:</strong> Contrast with deprecated <code>NavigationView</code>. Know how to push programmatically by appending to <code>path</code>.</p>
+<p><strong>Resources:</strong> WWDC22 "The SwiftUI cookbook for navigation"; Apple docs.</p>
+<hr>
+<h2 id="69-modifiers-animations--transitions">6.9 Modifiers, Animations &amp; Transitions</h2>
+<p><strong>Summary (easy):</strong> View modifiers return a new modified view (order matters!). Animations are declarative — change state inside <code>withAnimation</code> and SwiftUI interpolates; transitions animate insertion/removal.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>Text("Hi").padding().background(.blue)   <span class="cm">// order matters</span>
+withAnimation(.spring) { isExpanded.toggle() }</code></pre>
+<p><strong>Interview angle:</strong> "Why does <code>.padding().background()</code> differ from <code>.background().padding()</code>?" — modifier ordering wraps views in layers.</p>
+<p><strong>Resources:</strong> Apple — <em>Animations</em>; Hacking with Swift animation guides.</p>
+<hr>
+<h2 id="610-uikit--swiftui-interoperability">6.10 UIKit ↔ SwiftUI Interoperability</h2>
+<p><strong>Summary (easy):</strong> Wrap UIKit views in SwiftUI with <code>UIViewRepresentable</code>/<code>UIViewControllerRepresentable</code>; embed SwiftUI in UIKit with <code>UIHostingController</code>. Essential for incremental migration.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>struct MapViewWrapper: UIViewRepresentable {
+    func makeUIView(context: Context) -&gt; MKMapView { MKMapView() }
+    func updateUIView(_ v: MKMapView, context: Context) {}
+}</code></pre>
+<p><strong>Interview angle:</strong> Real teams migrate gradually — expect "how would you embed an existing UIKit screen in a new SwiftUI app?".</p>
+<p><strong>Resources:</strong> Apple — <em>UIViewRepresentable</em>; WWDC "Use SwiftUI with UIKit".</p>
+<div class="pagenav"><a class="nav-btn" href="05-uikit.html">← Previous phase</a><a class="nav-btn" href="07-architecture.html">Next phase →</a></div>
+</div>
+</body>
+</html>

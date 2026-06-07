@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 2 — Intermediate Swift &amp; The Type System · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 2 — Intermediate Swift &amp; The Type System</h1>
+<p>This is where SDE-2/3 interviews start separating people. Protocols, generics, and the <code>some</code>/<code>any</code> distinction come up constantly.</p>
+<hr>
+<h2 id="21-protocols--protocol-oriented-programming-pop">2.1 Protocols &amp; Protocol-Oriented Programming (POP)</h2>
+<p><strong>Summary (easy):</strong> A protocol is a contract: "any type that conforms must provide these methods/properties." POP means building behavior by composing small protocols instead of deep class inheritance.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>protocol Drawable { func draw() }
+struct Circle: Drawable { func draw() { print("○") } }
+struct Square: Drawable { func draw() { print("□") } }
+let shapes: [Drawable] = [Circle(), Square()]
+shapes.forEach { $0.draw() }</code></pre>
+<p><strong>Interview angle:</strong> "Protocol vs base class?" → protocols allow multiple conformance, work with value types, and avoid the fragile-base-class problem.</p>
+<p><strong>Resources:</strong> Apple — <em>Protocols</em>; WWDC "Protocol-Oriented Programming in Swift"; Hacking with Swift — "POP".</p>
+<hr>
+<h2 id="22-protocol-extensions--default-implementations">2.2 Protocol Extensions &amp; Default Implementations</h2>
+<p><strong>Summary (easy):</strong> You can add default method implementations to a protocol via an extension, so conformers get behavior for free unless they override it.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>protocol Greeter { func greet() }
+extension Greeter { func greet() { print("Hello") } }  <span class="cm">// default</span>
+struct Robot: Greeter {}   <span class="cm">// uses default greet()</span></code></pre>
+<p><strong>Interview angle:</strong> Watch the gotcha: static vs dynamic dispatch. A method only declared in the extension (not the protocol requirement) is dispatched statically — calling it through the protocol type uses the extension version, not an override.</p>
+<p><strong>Resources:</strong> Apple — <em>Protocol Extensions</em>; Swift by Sundell — "Protocol extension dispatch".</p>
+<hr>
+<h2 id="23-generics-constraints-where-clauses">2.3 Generics (constraints, where clauses)</h2>
+<p><strong>Summary (easy):</strong> Generics let you write one function/type that works with many types while staying type-safe. Constraints restrict which types are allowed.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func swapTwo&lt;T&gt;(_ a: inout T, _ b: inout T) { (a, b) = (b, a) }
+func largest&lt;T: Comparable&gt;(_ items: [T]) -&gt; T? { items.max() }
+func indexOf&lt;T&gt;(_ x: T, in arr: [T]) -&gt; Int? where T: Equatable {
+    arr.firstIndex(of: x)
+}</code></pre>
+<p><strong>Interview angle:</strong> Generics are resolved at compile time (monomorphization) → fast. Contrast with <code>any</code> existentials which add a runtime box.</p>
+<p><strong>Resources:</strong> Apple — <em>Generics</em>; Hacking with Swift — "Generics".</p>
+<hr>
+<h2 id="24-associated-types">2.4 Associated Types</h2>
+<p><strong>Summary (easy):</strong> A protocol can declare a placeholder type (<code>associatedtype</code>) that each conformer fills in. This is how <code>Collection</code>, <code>Sequence</code>, etc. stay generic.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>protocol Container {
+    associatedtype Item
+    mutating func append(_ item: Item)
+    var count: Int { get }
+}
+struct IntBox: Container {
+    var items = [Int]()
+    mutating func append(_ item: Int) { items.append(item) }
+    var count: Int { items.count }
+}</code></pre>
+<p><strong>Interview angle:</strong> Protocols with associated types ("PATs") can't be used as plain types pre-Swift 5.7 without <code>any</code>; know why.</p>
+<p><strong>Resources:</strong> Apple — <em>Associated Types</em>; Swift Evolution SE-0309 (existentials).</p>
+<hr>
+<h2 id="25-opaque-types-some-vs-existentials-any">2.5 Opaque Types (<code>some</code>) vs Existentials (<code>any</code>)</h2>
+<p><strong>Summary (easy):</strong> <code>some Protocol</code> = "one specific concrete type the compiler knows, but the caller doesn't" (zero overhead). <code>any Protocol</code> = "any type conforming, boxed at runtime" (flexible, slight cost).</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func makeShape() -&gt; some Drawable { Circle() }   <span class="cm">// opaque: always Circle</span>
+let things: [any Drawable] = [Circle(), Square()] <span class="cm">// existential: mixed</span></code></pre>
+<p><strong>Interview angle:</strong> This is a <em>very</em> common modern Swift question. <code>some</code> keeps type identity (good for SwiftUI <code>body</code>), <code>any</code> erases it for heterogeneous collections.</p>
+<p><strong>Resources:</strong> Apple — <em>Opaque and Boxed Types</em>; Swift by Sundell — "some vs any"; WWDC22 "Embrace Swift generics".</p>
+<hr>
+<h2 id="26-property-wrappers">2.6 Property Wrappers</h2>
+<p><strong>Summary (easy):</strong> A property wrapper bundles get/set logic so you can reuse it with <code>@MyWrapper</code>. SwiftUI's <code>@State</code>, <code>@Published</code> are property wrappers.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>@propertyWrapper struct Clamped {
+    private var value = 0
+    var wrappedValue: Int {
+        get { value }
+        set { value = min(max(newValue, 0), 100) }
+    }
+}
+struct Volume { @Clamped var level: Int }</code></pre>
+<p><strong>Interview angle:</strong> Know <code>wrappedValue</code> and <code>projectedValue</code> (<code>$</code>). Explains how <code>@Published</code>'s <code>$</code> exposes a publisher.</p>
+<p><strong>Resources:</strong> Apple — <em>Property Wrappers</em>; SwiftLee — "Property wrappers in Swift".</p>
+<hr>
+<h2 id="27-codable-encoding--decoding">2.7 Codable (Encoding &amp; Decoding)</h2>
+<p><strong>Summary (easy):</strong> Conform to <code>Codable</code> and Swift auto-generates JSON↔model conversion. Customize with <code>CodingKeys</code>, custom <code>init(from:)</code>, and date/key strategies.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>struct User: Codable {
+    let id: Int
+    let fullName: String
+    enum CodingKeys: String, CodingKey { case id, fullName = "full_name" }
+}
+let user = try JSONDecoder().decode(User.self, from: jsonData)</code></pre>
+<p><strong>Interview angle:</strong> Be ready for nested keys, snake_case mapping, decoding heterogeneous JSON, and <code>keyDecodingStrategy = .convertFromSnakeCase</code>.</p>
+<p><strong>Resources:</strong> Apple — <em>Encoding and Decoding Custom Types</em>; Swift by Sundell — "Codable" series.</p>
+<hr>
+<h2 id="28-equatable-hashable-comparable-identifiable">2.8 Equatable, Hashable, Comparable, Identifiable</h2>
+<p><strong>Summary (easy):</strong> These protocols let your types be compared (<code>==</code>), put in Sets/Dictionaries (<code>Hashable</code>), sorted (<code>Comparable</code>), and used in SwiftUI lists (<code>Identifiable</code>).</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>struct Person: Hashable, Comparable, Identifiable {
+    let id = UUID()
+    let name: String
+    static func &lt; (l: Person, r: Person) -&gt; Bool { l.name &lt; r.name }
+}</code></pre>
+<p><strong>Interview angle:</strong> Synthesized conformance only works when all stored properties conform. Know when you must implement <code>hash(into:)</code> manually.</p>
+<p><strong>Resources:</strong> Apple — <em>Equatable / Hashable</em>; Hacking with Swift articles.</p>
+<hr>
+<h2 id="29-type-casting--anyanyobject">2.9 Type Casting &amp; <code>Any</code>/<code>AnyObject</code></h2>
+<p><strong>Summary (easy):</strong> <code>is</code> checks a type; <code>as?</code> tries a cast (returns optional); <code>as!</code> force-casts (crashes if wrong); <code>as</code> is for guaranteed/upcasts. <code>Any</code> holds anything; <code>AnyObject</code> holds any class.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let items: [Any] = [1, "two", 3.0]
+for item in items {
+    if let n = item as? Int { print("int \(n)") }
+    else if item is String { print("a string") }
+}</code></pre>
+<p><strong>Interview angle:</strong> Prefer <code>as?</code> with binding; avoid <code>as!</code>. Discuss why overusing <code>Any</code> defeats Swift's type safety.</p>
+<p><strong>Resources:</strong> Apple — <em>Type Casting</em>.</p>
+<hr>
+<h2 id="210-extensions-computed-properties--observers">2.10 Extensions, Computed Properties &amp; Observers</h2>
+<p><strong>Summary (easy):</strong> Extensions add functionality to existing types (even ones you don't own). Computed properties calculate on the fly; <code>willSet</code>/<code>didSet</code> observe changes; <code>lazy</code> defers creation until first use.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>extension Int { var squared: Int { self * self } }
+class Profile {
+    var name = "" { didSet { print("changed to \(name)") } }
+    lazy var avatar = expensiveLoad()
+    func expensiveLoad() -&gt; String { "img" }
+}</code></pre>
+<p><strong>Interview angle:</strong> <code>lazy</code> can't be <code>let</code>, isn't thread-safe, and runs once. <code>didSet</code> doesn't fire during initialization.</p>
+<p><strong>Resources:</strong> Apple — <em>Extensions</em> and <em>Properties</em>.</p>
+<div class="pagenav"><a class="nav-btn" href="01-swift-fundamentals.html">← Previous phase</a><a class="nav-btn" href="03-memory-management.html">Next phase →</a></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 9 — Persistence &amp; Data Storage · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 9 — Persistence &amp; Data Storage</h1>
+<p>You'll be asked "where would you store X?" — and the right answer depends on size, sensitivity, and structure. Know the whole toolbox.</p>
+<hr>
+<h2 id="91-userdefaults">9.1 UserDefaults</h2>
+<p><strong>Summary (easy):</strong> A simple key-value store for small bits of data (settings, flags, last-opened tab). Persists across launches. <em>Not</em> for large or sensitive data.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>UserDefaults.standard.set(true, forKey: "hasOnboarded")
+let seen = UserDefaults.standard.bool(forKey: "hasOnboarded")</code></pre>
+<p><strong>Interview angle:</strong> Never store tokens/passwords here (it's a plist, unencrypted). Don't store large blobs — it's loaded into memory.</p>
+<p><strong>Resources:</strong> Apple — <em>UserDefaults</em>; Use Your Loaf articles.</p>
+<hr>
+<h2 id="92-keychain">9.2 Keychain</h2>
+<p><strong>Summary (easy):</strong> The secure, encrypted store for sensitive data: passwords, tokens, keys. Backed by the Secure Enclave-protected keychain services.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code><span class="cm">// Use a wrapper like KeychainAccess, or Security framework SecItemAdd directly</span>
+try keychain.set(accessToken, key: "auth_token")</code></pre>
+<p><strong>Interview angle:</strong> Explain <em>why</em> tokens go in the Keychain, not UserDefaults. Know accessibility options (e.g., <code>.whenUnlockedThisDeviceOnly</code>).</p>
+<p><strong>Resources:</strong> Apple — <em>Keychain Services</em>; KeychainAccess library.</p>
+<hr>
+<h2 id="93-file-system-filemanager">9.3 File System (FileManager)</h2>
+<p><strong>Summary (easy):</strong> Store files in the app sandbox: <code>Documents</code> (user data, backed up), <code>Caches</code> (regenerable, may be purged), <code>tmp</code> (temporary). Use <code>FileManager</code> to read/write/move.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    .appendingPathComponent("notes.json")
+try data.write(to: url)</code></pre>
+<p><strong>Interview angle:</strong> Know the directories and their backup/purge behavior. Large downloads → Caches or Application Support, not Documents.</p>
+<p><strong>Resources:</strong> Apple — <em>File System Programming Guide</em>.</p>
+<hr>
+<h2 id="94-core-data-stack-contexts-fetch-concurrency">9.4 Core Data (stack, contexts, fetch, concurrency)</h2>
+<p><strong>Summary (easy):</strong> Apple's object-graph persistence framework. The "stack" = managed object model + persistent store coordinator + managed object context(s). You fetch/insert/save through a context.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let request = NSFetchRequest&lt;Note&gt;(entityName: "Note")
+request.predicate = NSPredicate(format: "isPinned == YES")
+request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
+let notes = try context.fetch(request)</code></pre>
+<p><strong>Interview angle:</strong> Concurrency is the deep question: use a background context for heavy work and merge into the main (view) context. Know <code>NSFetchedResultsController</code>, faulting, and lightweight migration.</p>
+<p><strong>Resources:</strong> Apple — <em>Core Data Programming Guide</em>; objc.io "Core Data" book.</p>
+<hr>
+<h2 id="95-swiftdata-ios-17">9.5 SwiftData (iOS 17+)</h2>
+<p><strong>Summary (easy):</strong> A modern, Swift-native persistence layer built on Core Data, using the <code>@Model</code> macro. Far less boilerplate; integrates cleanly with SwiftUI via <code>@Query</code>.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>@Model class Note { var title: String; init(title: String) { self.title = title } }
+<span class="cm">// In a View:  @Query var notes: [Note]</span></code></pre>
+<p><strong>Interview angle:</strong> Know SwiftData is built atop Core Data and when you'd still reach for Core Data (fine-grained control, older OS support).</p>
+<p><strong>Resources:</strong> WWDC23 "Meet SwiftData"; Apple — <em>SwiftData</em>; Hacking with Swift SwiftData course.</p>
+<hr>
+<h2 id="96-sqlite--grdb--realm-awareness">9.6 SQLite / GRDB / Realm (awareness)</h2>
+<p><strong>Summary (easy):</strong> SQLite is the underlying database many tools wrap. GRDB is a fast, type-safe Swift SQLite toolkit. Realm is an alternative object database. Useful when you need raw SQL power or cross-platform sync.</p>
+<p><strong>Example (concept):</strong></p>
+<pre class="code" data-lang="swift"><code><span class="cm">// GRDB: try dbQueue.write { db in try note.insert(db) }</span></code></pre>
+<p><strong>Interview angle:</strong> Be able to compare: Core Data/SwiftData (Apple-native, object graph) vs GRDB/SQLite (closer to SQL, predictable) vs Realm (easy, but a third-party runtime).</p>
+<p><strong>Resources:</strong> GRDB GitHub docs; Realm docs; SQLite.org.</p>
+<hr>
+<h2 id="97-migration-strategies">9.7 Migration Strategies</h2>
+<p><strong>Summary (easy):</strong> When your data model changes between app versions, you migrate existing user data. Core Data offers lightweight (automatic) and heavyweight (mapping model) migrations; SwiftData uses <code>VersionedSchema</code> + <code>SchemaMigrationPlan</code>.</p>
+<p><strong>Example (concept):</strong></p>
+<pre class="code" data-lang="swift"><code><span class="cm">// Core Data lightweight migration options:</span>
+options = [NSMigratePersistentStoresAutomaticallyOption: true,
+           NSInferMappingModelAutomaticallyOption: true]</code></pre>
+<p><strong>Interview angle:</strong> Migrations are a real production pain point — showing you've thought about versioning and not losing user data scores points.</p>
+<p><strong>Resources:</strong> Apple — <em>Core Data Model Versioning and Data Migration</em>; SwiftData schema migration docs.</p>
+<div class="pagenav"><a class="nav-btn" href="08-networking.html">← Previous phase</a><a class="nav-btn" href="10-combine.html">Next phase →</a></div>
+</div>
+</body>
+</html>

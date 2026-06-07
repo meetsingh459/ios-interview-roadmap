@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 7 — Architecture &amp; Design Patterns · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 7 — Architecture &amp; Design Patterns</h1>
+<p>Senior interviews lean heavily here: "How would you structure this screen/feature?" You need opinions backed by trade-offs, not just definitions.</p>
+<hr>
+<h2 id="71-mvc-mvp-mvvm-viper-clean-tca">7.1 MVC, MVP, MVVM, VIPER, Clean, TCA</h2>
+<p><strong>Summary (easy):</strong> These are ways to split responsibilities so code stays testable and maintainable. MVC (Apple's classic, often "Massive VC"), MVP (presenter holds logic), MVVM (view model exposes state — pairs perfectly with SwiftUI/Combine), VIPER (very granular), Clean Architecture (layered use-cases), TCA (unidirectional, state-driven).</p>
+<p><strong>Example (MVVM idea):</strong></p>
+<pre class="code" data-lang="swift"><code>@Observable class ProfileVM {     <span class="cm">// view model owns state + logic</span>
+    var user: User?
+    func load() async { user = try? await api.fetchUser() }
+}</code></pre>
+<p><strong>Interview angle:</strong> Don't just name them — say <em>when</em> you'd choose each and the cost (VIPER = many files/boilerplate; MVVM = great default for SwiftUI). Explain how each improves testability.</p>
+<p><strong>Resources:</strong> Kodeco — iOS architecture series; Point-Free — TCA; objc.io "App Architecture" book.</p>
+<hr>
+<h2 id="72-delegation-pattern">7.2 Delegation Pattern</h2>
+<p><strong>Summary (easy):</strong> One object hands off responsibility to another via a protocol. Used everywhere in UIKit (<code>UITableViewDelegate</code>). The delegate is usually <code>weak</code> to avoid retain cycles.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>protocol PickerDelegate: AnyObject { func didPick(_ value: String) }
+class Picker { weak var delegate: PickerDelegate? }</code></pre>
+<p><strong>Interview angle:</strong> Delegation = one-to-one callback. Contrast with closures (lighter) and NotificationCenter (one-to-many).</p>
+<p><strong>Resources:</strong> Apple — <em>Delegation</em>; Swift by Sundell.</p>
+<hr>
+<h2 id="73-observer-pattern-notificationcenter--kvo">7.3 Observer Pattern: NotificationCenter &amp; KVO</h2>
+<p><strong>Summary (easy):</strong> Lets objects react to events without tight coupling. <code>NotificationCenter</code> broadcasts named notifications to many listeners; KVO (Key-Value Observing) watches a specific property for changes.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>NotificationCenter.default.addObserver(
+    forName: .didLogin, object: nil, queue: .main) { _ in refresh() }</code></pre>
+<p><strong>Interview angle:</strong> Know KVO requires <code>@objc dynamic</code> properties (Obj-C runtime). Modern Swift prefers Combine/Observation over both.</p>
+<p><strong>Resources:</strong> Apple — <em>NotificationCenter</em>, <em>KVO</em>.</p>
+<hr>
+<h2 id="74-singleton-and-its-pitfalls">7.4 Singleton (and its pitfalls)</h2>
+<p><strong>Summary (easy):</strong> A single shared instance for the whole app (<code>URLSession.shared</code>, <code>UserDefaults.standard</code>). Convenient but easy to abuse — hidden global state hurts testability.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>final class Analytics { static let shared = Analytics(); private init() {} }</code></pre>
+<p><strong>Interview angle:</strong> Be critical: singletons make unit testing hard (can't inject a fake). Prefer dependency injection; use singletons sparingly and behind a protocol.</p>
+<p><strong>Resources:</strong> Swift by Sundell — "Avoiding singletons"; Point-Free episodes.</p>
+<hr>
+<h2 id="75-dependency-injection-di">7.5 Dependency Injection (DI)</h2>
+<p><strong>Summary (easy):</strong> Instead of an object creating its own dependencies, you pass them in (constructor, property, or method). This makes code testable and flexible.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>protocol APIClient { func fetch() async -&gt; Data }
+final class Feed {
+    let api: APIClient
+    init(api: APIClient) { self.api = api }   <span class="cm">// injected -&gt; mockable in tests</span>
+}</code></pre>
+<p><strong>Interview angle:</strong> Constructor injection is preferred. Be able to explain how DI enables swapping a real API for a mock in tests.</p>
+<p><strong>Resources:</strong> Swift by Sundell — "Dependency injection"; Point-Free "Dependencies".</p>
+<hr>
+<h2 id="76-coordinator-pattern">7.6 Coordinator Pattern</h2>
+<p><strong>Summary (easy):</strong> Moves navigation logic out of view controllers into a dedicated "coordinator" object, so screens don't need to know about each other. Improves reuse and testability of flows.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>final class AppCoordinator {
+    let nav: UINavigationController
+    func start() { nav.setViewControllers([HomeVC(coordinator: self)], animated: false) }
+    func showDetail() { nav.pushViewController(DetailVC(), animated: true) }
+}</code></pre>
+<p><strong>Interview angle:</strong> Solves "view controllers shouldn't instantiate each other." Common in UIKit MVVM-C.</p>
+<p><strong>Resources:</strong> Hacking with Swift — "Coordinator pattern"; Soroush Khanlou's original articles.</p>
+<hr>
+<h2 id="77-factory-builder-adapter-strategy-repository">7.7 Factory, Builder, Adapter, Strategy, Repository</h2>
+<p><strong>Summary (easy):</strong> Reusable solutions to recurring problems: Factory (create objects without exposing concrete types), Builder (step-by-step construction), Adapter (make incompatible interfaces work together), Strategy (swap algorithms behind a protocol), Repository (abstract data sources behind one interface).</p>
+<p><strong>Example (Strategy):</strong></p>
+<pre class="code" data-lang="swift"><code>protocol SortStrategy { func sort(_ a: [Int]) -&gt; [Int] }
+struct QuickSort: SortStrategy { func sort(_ a: [Int]) -&gt; [Int] { a.sorted() } }</code></pre>
+<p><strong>Interview angle:</strong> You don't need all 23 GoF patterns — know the 5–6 above with a Swift example each and when each appears in iOS code.</p>
+<p><strong>Resources:</strong> "Design Patterns by Tutorials" (Kodeco); refactoring.guru (language-agnostic).</p>
+<hr>
+<h2 id="78-solid-principles--composition-over-inheritance">7.8 SOLID Principles &amp; Composition over Inheritance</h2>
+<p><strong>Summary (easy):</strong> SOLID = five guidelines for maintainable OOP: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion. "Composition over inheritance" means build behavior by combining small pieces (protocols/structs) rather than deep class trees.</p>
+<p><strong>Example (Dependency Inversion):</strong></p>
+<pre class="code" data-lang="swift"><code><span class="cm">// High-level code depends on an abstraction, not a concrete DB</span>
+protocol Storage { func save(_ s: String) }
+final class Logger { let storage: Storage; init(storage: Storage) { self.storage = storage } }</code></pre>
+<p><strong>Interview angle:</strong> Tie SOLID to real refactors. "Single Responsibility" is the answer to "how do you avoid a Massive View Controller?"</p>
+<p><strong>Resources:</strong> Uncle Bob's SOLID articles; Kodeco SOLID-in-Swift tutorial.</p>
+<div class="pagenav"><a class="nav-btn" href="06-swiftui.html">← Previous phase</a><a class="nav-btn" href="08-networking.html">Next phase →</a></div>
+</div>
+</body>
+</html>

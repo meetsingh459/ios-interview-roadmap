@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 13 — App Lifecycle, Tooling &amp; Release · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 13 — App Lifecycle, Tooling &amp; Release</h1>
+<p>The "ship it" knowledge. Shows you understand the full product lifecycle, not just writing features.</p>
+<hr>
+<h2 id="131-app-states--background-execution">13.1 App States &amp; Background Execution</h2>
+<p><strong>Summary (easy):</strong> Apps move between not-running, inactive, active, background, and suspended. The system grants limited background time; for longer work you request specific background modes or use background tasks.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code><span class="cm">// BGTaskScheduler for deferred refresh</span>
+BGTaskScheduler.shared.register(forTaskWithIdentifier: "refresh", using: nil) { task in
+    handleRefresh(task as! BGAppRefreshTask)
+}</code></pre>
+<p><strong>Interview angle:</strong> Know <code>beginBackgroundTask</code> (short extension), <code>BGTaskScheduler</code> (refresh/processing), and background URLSession (long downloads).</p>
+<p><strong>Resources:</strong> Apple — <em>Background Tasks</em>; WWDC "Background execution demystified".</p>
+<hr>
+<h2 id="132-push--local-notifications">13.2 Push &amp; Local Notifications</h2>
+<p><strong>Summary (easy):</strong> Local notifications are scheduled by the app; remote (push) notifications come from your server via APNs. You register for a device token, send it to your backend, and APNs delivers payloads.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let content = UNMutableNotificationContent(); content.title = "Reminder"
+let req = UNNotificationRequest(identifier: "id", content: content, trigger: nil)
+UNUserNotificationCenter.current().add(req)</code></pre>
+<p><strong>Interview angle:</strong> Know the APNs flow, silent/background pushes (<code>content-available</code>), and rich/actionable notifications.</p>
+<p><strong>Resources:</strong> Apple — <em>UserNotifications</em>; <em>Setting up a remote notification server</em>.</p>
+<hr>
+<h2 id="133-deep-linking--universal-links">13.3 Deep Linking &amp; Universal Links</h2>
+<p><strong>Summary (easy):</strong> Custom URL schemes (<code>myapp://</code>) and Universal Links (<code>https://...</code> mapped to the app via an Apple App Site Association file) open specific screens directly from links/notifications.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func scene(_ s: UIScene, continue activity: NSUserActivity) {
+    if let url = activity.webpageURL { route(to: url) }
+}</code></pre>
+<p><strong>Interview angle:</strong> Know why Universal Links are preferred (secure, fall back to web). Know how to parse and route a link to deep state.</p>
+<p><strong>Resources:</strong> Apple — <em>Universal Links</em>; <em>Defining a custom URL scheme</em>.</p>
+<hr>
+<h2 id="134-code-signing-provisioning--certificates">13.4 Code Signing, Provisioning &amp; Certificates</h2>
+<p><strong>Summary (easy):</strong> Apple requires apps to be cryptographically signed. A certificate proves who you are; a provisioning profile ties your app ID + devices + entitlements together. This is what lets the app run on real devices and ship.</p>
+<p><strong>Example (concept):</strong></p>
+<pre class="code" data-lang="text"><code>Certificate (identity) + App ID + Devices + Entitlements = Provisioning Profile</code></pre>
+<p><strong>Interview angle:</strong> Be able to explain development vs distribution profiles and common "code signing" failures. You don't need to memorize every step, just the model.</p>
+<p><strong>Resources:</strong> Apple — <em>Code Signing</em>; Fastlane match docs.</p>
+<hr>
+<h2 id="135-cicd-fastlane-xcode-cloud">13.5 CI/CD (Fastlane, Xcode Cloud)</h2>
+<p><strong>Summary (easy):</strong> Continuous Integration builds/tests every change; Continuous Delivery automates beta/App Store releases. Fastlane scripts the tedious steps; Xcode Cloud is Apple's hosted CI.</p>
+<p><strong>Example (concept):</strong></p>
+<pre class="code" data-lang="ruby"><code># Fastlane lane
+lane :beta do
+  build_app(scheme: "App")
+  upload_to_testflight
+end</code></pre>
+<p><strong>Interview angle:</strong> Describe a pipeline: PR → run tests/lint → build → TestFlight → App Store. Mention signing automation and secrets handling.</p>
+<p><strong>Resources:</strong> Fastlane docs; Apple — <em>Xcode Cloud</em>.</p>
+<hr>
+<h2 id="136-app-store-testflight-crash-reporting--feature-flags">13.6 App Store, TestFlight, Crash Reporting &amp; Feature Flags</h2>
+<p><strong>Summary (easy):</strong> TestFlight distributes betas; App Store Connect handles submission and review. Crash reporting (MetricKit/Crashlytics/Sentry) surfaces production issues; feature flags let you toggle/roll out features without a new release.</p>
+<p><strong>Example (concept):</strong></p>
+<pre class="code" data-lang="swift"><code>if FeatureFlags.shared.isEnabled(.newCheckout) { showNewCheckout() }</code></pre>
+<p><strong>Interview angle:</strong> Know phased rollouts, staged release, symbolication of crash logs, and why feature flags + remote config reduce release risk.</p>
+<p><strong>Resources:</strong> Apple — <em>App Store Connect</em>, <em>MetricKit</em>; common crash-reporting SDK docs.</p>
+<hr>
+<h2 id="137-app-thinning-bitcode--app-size">13.7 App Thinning, Bitcode &amp; App Size</h2>
+<p><strong>Summary (easy):</strong> App thinning delivers only the resources a given device needs (app slicing), plus on-demand resources and (historically) bitcode. Keeping app size down improves install/conversion rates.</p>
+<p><strong>Example (concept):</strong></p>
+<pre class="code" data-lang="text"><code>App Store ▸ slicing → device-specific IPA; asset catalogs enable per-device assets</code></pre>
+<p><strong>Interview angle:</strong> Know that bitcode is now deprecated; focus on asset catalogs, on-demand resources, and analyzing the size report.</p>
+<p><strong>Resources:</strong> Apple — <em>App Thinning</em>; WWDC app size sessions.</p>
+<div class="pagenav"><a class="nav-btn" href="12-performance.html">← Previous phase</a><a class="nav-btn" href="14-advanced.html">Next phase →</a></div>
+</div>
+</body>
+</html>

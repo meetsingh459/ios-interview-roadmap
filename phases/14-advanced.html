@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 14 — Advanced &amp; Niche Topics · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 14 — Advanced &amp; Niche Topics</h1>
+<p>The "senior signal" round. You won't get all of these, but being able to discuss a few with confidence sets SDE-3 candidates apart.</p>
+<hr>
+<h2 id="141-method-dispatch-static-dynamic-witness-table-vtable">14.1 Method Dispatch (static, dynamic, witness table, vtable)</h2>
+<p><strong>Summary (easy):</strong> Dispatch decides which implementation of a method runs. Static (direct, fastest) for <code>final</code>/value types; vtable (table lookup) for class inheritance; witness table for protocol methods; dynamic (Obj-C <code>objc_msgSend</code>) for <code>@objc dynamic</code>.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>final class A { func f() {} }     <span class="cm">// static dispatch</span>
+class B { func g() {} }           <span class="cm">// vtable dispatch (overridable)</span>
+protocol P { func h() }            <span class="cm">// witness table dispatch</span></code></pre>
+<p><strong>Interview angle:</strong> This is a hallmark senior question. Know how <code>final</code>, <code>private</code>, and value types let the compiler devirtualize for speed.</p>
+<p><strong>Resources:</strong> WWDC16 "Understanding Swift Performance"; Swift.org optimization notes.</p>
+<hr>
+<h2 id="142-objective-c-interop-objc-dynamic-bridging">14.2 Objective-C Interop (@objc, dynamic, bridging)</h2>
+<p><strong>Summary (easy):</strong> Swift and Obj-C coexist. <code>@objc</code> exposes Swift to the Obj-C runtime (needed for selectors, KVO, some frameworks); <code>dynamic</code> forces runtime dispatch. A bridging header imports Obj-C into Swift.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>@objc func handleTap() {}   <span class="cm">// usable with #selector</span>
+@objc dynamic var progress = 0.0   <span class="cm">// KVO-observable</span></code></pre>
+<p><strong>Interview angle:</strong> Know <em>when</em> you still need <code>@objc</code> (selectors, KVO, NSCoding, some legacy APIs) and the cost of dynamic dispatch.</p>
+<p><strong>Resources:</strong> Apple — <em>Importing Objective-C into Swift</em>; Swift/Obj-C interop guide.</p>
+<hr>
+<h2 id="143-method-swizzling--the-runtime">14.3 Method Swizzling &amp; the Runtime</h2>
+<p><strong>Summary (easy):</strong> Swizzling swaps two methods' implementations at runtime using the Obj-C runtime. Powerful (analytics hooks, debugging) but risky — global, order-dependent, easy to break. Use sparingly.</p>
+<p><strong>Example (concept):</strong></p>
+<pre class="code" data-lang="swift"><code>method_exchangeImplementations(original, replacement)</code></pre>
+<p><strong>Interview angle:</strong> Be able to explain a legitimate use (e.g., tracking <code>viewDidAppear</code> app-wide) <em>and</em> why it's dangerous and discouraged in app code.</p>
+<p><strong>Resources:</strong> NSHipster — "Method Swizzling"; Apple Obj-C runtime reference.</p>
+<hr>
+<h2 id="144-result-builders-resultbuilder">14.4 Result Builders (@resultBuilder)</h2>
+<p><strong>Summary (easy):</strong> A result builder transforms a block of statements into a single value — the magic behind SwiftUI's <code>body</code> (<code>ViewBuilder</code>). You can build your own DSLs.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>@resultBuilder struct StringBuilder {
+    static func buildBlock(_ parts: String...) -&gt; String { parts.joined(separator: " ") }
+}</code></pre>
+<p><strong>Interview angle:</strong> Know that SwiftUI's declarative syntax is powered by <code>@resultBuilder</code> + trailing closures + opaque return types.</p>
+<p><strong>Resources:</strong> Swift Evolution SE-0289; Apple — <em>Result builders</em>; Hacking with Swift.</p>
+<hr>
+<h2 id="145-macros-swift-59">14.5 Macros (Swift 5.9+)</h2>
+<p><strong>Summary (easy):</strong> Macros generate code at compile time from an annotation, reducing boilerplate while staying type-safe. <code>@Observable</code>, <code>#Preview</code>, and SwiftData's <code>@Model</code> are macros. Two kinds: freestanding (<code>#name</code>) and attached (<code>@name</code>).</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>@Observable class Counter { var value = 0 }   <span class="cm">// expands to observation plumbing</span>
+let url = #URL("https:<span class="cm">//apple.com")            // compile-time validated (example)</span></code></pre>
+<p><strong>Interview angle:</strong> You won't be asked to <em>write</em> a macro often, but explaining what they are and naming examples shows you're current.</p>
+<p><strong>Resources:</strong> WWDC23 "Expand on Swift macros"; Apple — <em>Macros</em>.</p>
+<hr>
+<h2 id="146-modules-frameworks--swift-package-manager">14.6 Modules, Frameworks &amp; Swift Package Manager</h2>
+<p><strong>Summary (easy):</strong> Code is organized into modules; you can package reusable code as static or dynamic frameworks/libraries. SPM is Apple's dependency manager (<code>Package.swift</code>) — now the default over CocoaPods/Carthage.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code><span class="cm">// Package.swift</span>
+.target(name: "Networking", dependencies: [])</code></pre>
+<p><strong>Interview angle:</strong> Know static vs dynamic linking trade-offs (launch time vs binary size), and modularization benefits (build times, ownership, testability).</p>
+<p><strong>Resources:</strong> Apple — <em>Swift Packages</em>; WWDC SPM sessions.</p>
+<hr>
+<h2 id="147-accessibility-voiceover-dynamic-type">14.7 Accessibility (VoiceOver, Dynamic Type)</h2>
+<p><strong>Summary (easy):</strong> Accessibility makes your app usable by everyone: VoiceOver reads the screen, Dynamic Type scales fonts, and proper labels/traits describe controls. It's increasingly expected (and asked) at top companies.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>button.accessibilityLabel = "Play"
+Text("Hi").dynamicTypeSize(...DynamicTypeSize.accessibility3)   <span class="cm">// SwiftUI</span></code></pre>
+<p><strong>Interview angle:</strong> Know <code>accessibilityLabel/value/traits</code>, supporting Dynamic Type, and why hard-coded font sizes are an anti-pattern.</p>
+<p><strong>Resources:</strong> Apple — <em>Accessibility</em>; WWDC accessibility sessions.</p>
+<hr>
+<h2 id="148-localization-security--reflection">14.8 Localization, Security &amp; Reflection</h2>
+<p><strong>Summary (easy):</strong> Localization adapts text/formats per region (<code>Localizable.strings</code>, <code>String(localized:)</code>, format-aware dates/numbers). Security includes Data Protection (file encryption classes), avoiding storing secrets in code, and the App Sandbox. <code>Mirror</code> gives limited runtime reflection.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let greeting = String(localized: "welcome_message")
+let mirror = Mirror(reflecting: someStruct)   <span class="cm">// inspect properties</span></code></pre>
+<p><strong>Interview angle:</strong> Know that Swift reflection is read-only/limited (unlike Java). For security, know Data Protection levels and that sensitive data belongs in Keychain.</p>
+<p><strong>Resources:</strong> Apple — <em>Localization</em>, <em>Encrypting Your App's Files</em>, <em>Mirror</em>; OWASP Mobile Top 10.</p>
+<div class="pagenav"><a class="nav-btn" href="13-lifecycle-tooling-release.html">← Previous phase</a><span></span></div>
+</div>
+</body>
+</html>

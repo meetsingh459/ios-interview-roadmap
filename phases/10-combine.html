@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 10 — Combine &amp; Reactive Programming · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 10 — Combine &amp; Reactive Programming</h1>
+<p>Many existing codebases use Combine. Even as async/await grows, interviewers ask about publishers, operators, and memory management.</p>
+<hr>
+<h2 id="101-publishers-subscribers--the-combine-model">10.1 Publishers, Subscribers &amp; the Combine Model</h2>
+<p><strong>Summary (easy):</strong> Combine is a framework for handling values over time. A <em>publisher</em> emits values; a <em>subscriber</em> receives them; <em>operators</em> transform the stream in between. It's pull-based with backpressure.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let cancellable = [1, 2, 3].publisher
+    .map { $0 * 2 }
+    .sink { print($0) }   <span class="cm">// 2 4 6</span></code></pre>
+<p><strong>Interview angle:</strong> Explain the three publisher events: value(s), completion (finished/failure). Know that a subscription is kept alive by its <code>Cancellable</code>.</p>
+<p><strong>Resources:</strong> Apple — <em>Combine</em>; Kodeco "Combine: Asynchronous Programming with Swift" book.</p>
+<hr>
+<h2 id="102-published--observableobject">10.2 @Published &amp; ObservableObject</h2>
+<p><strong>Summary (easy):</strong> <code>@Published</code> turns a property into a publisher; combined with <code>ObservableObject</code>, SwiftUI views re-render when it changes. This was the standard view-model pattern before the Observation framework.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>class SearchVM: ObservableObject {
+    @Published var query = ""
+    @Published var results: [String] = []
+}</code></pre>
+<p><strong>Interview angle:</strong> Access the publisher with the <code>$</code> projected value: <code>$query</code>. Compare to the newer <code>@Observable</code>.</p>
+<p><strong>Resources:</strong> Apple docs; Hacking with Swift Combine articles.</p>
+<hr>
+<h2 id="103-subjects-passthroughsubject-currentvaluesubject">10.3 Subjects (PassthroughSubject, CurrentValueSubject)</h2>
+<p><strong>Summary (easy):</strong> Subjects are publishers you can imperatively send values into. <code>PassthroughSubject</code> has no initial value; <code>CurrentValueSubject</code> holds and replays its latest value to new subscribers.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let events = PassthroughSubject&lt;String, Never&gt;()
+let state = CurrentValueSubject&lt;Int, Never&gt;(0)
+events.send("tapped"); state.send(1)</code></pre>
+<p><strong>Interview angle:</strong> Use <code>CurrentValueSubject</code> when subscribers need the current state immediately (like a store).</p>
+<p><strong>Resources:</strong> Apple — <em>Subjects</em>; Donny Wals Combine series.</p>
+<hr>
+<h2 id="104-operators-map-flatmap-combinelatest-merge-zip-debounce">10.4 Operators (map, flatMap, combineLatest, merge, zip, debounce)</h2>
+<p><strong>Summary (easy):</strong> Operators reshape streams: <code>map</code> transforms, <code>flatMap</code> swaps in a new publisher, <code>combineLatest</code>/<code>zip</code>/<code>merge</code> join streams, <code>debounce</code> waits for a pause (great for search-as-you-type), <code>removeDuplicates</code> filters repeats.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>$query
+    .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
+    .removeDuplicates()
+    .sink { search($0) }
+    .store(in: &amp;cancellables)</code></pre>
+<p><strong>Interview angle:</strong> The debounced search pipeline is a frequent live exercise. Know <code>combineLatest</code> vs <code>zip</code> (latest-of-each vs paired).</p>
+<p><strong>Resources:</strong> Kodeco Combine book (operators); RxMarbles-style diagrams.</p>
+<hr>
+<h2 id="105-cancellables--memory-management-in-combine">10.5 Cancellables &amp; Memory Management in Combine</h2>
+<p><strong>Summary (easy):</strong> A subscription returns an <code>AnyCancellable</code>. Store it (usually in a <code>Set&lt;AnyCancellable&gt;</code>) to keep it alive; when it's deallocated, the subscription cancels. Forgetting to store it means the stream dies immediately.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>private var cancellables = Set&lt;AnyCancellable&gt;()
+publisher.sink { _ in }.store(in: &amp;cancellables)</code></pre>
+<p><strong>Interview angle:</strong> Watch for retain cycles in <code>sink</code> closures capturing <code>self</code> strongly — use <code>[weak self]</code>.</p>
+<p><strong>Resources:</strong> Apple — <em>AnyCancellable</em>; SwiftLee Combine memory articles.</p>
+<hr>
+<h2 id="106-schedulers-error-handling--combine-vs-asyncawait">10.6 Schedulers, Error Handling &amp; Combine vs async/await</h2>
+<p><strong>Summary (easy):</strong> <code>receive(on:)</code>/<code>subscribe(on:)</code> control which thread work runs on (move UI updates to <code>.main</code>). Errors flow through the completion; <code>catch</code>/<code>retry</code>/<code>replaceError</code> handle them. async/await is simpler for one-shot calls; Combine shines for ongoing streams.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>publisher
+    .receive(on: DispatchQueue.main)
+    .retry(2)
+    .catch { _ in Just(fallback) }
+    .sink { update($0) }.store(in: &amp;cancellables)</code></pre>
+<p><strong>Interview angle:</strong> Be able to say <em>when</em> you'd pick Combine (event streams, multiple subscribers, complex pipelines) vs async/await (linear async tasks). Know <code>.values</code> bridges a publisher into an <code>AsyncSequence</code>.</p>
+<p><strong>Resources:</strong> Apple — <em>Combine schedulers</em>; WWDC "Combine in Practice".</p>
+<div class="pagenav"><a class="nav-btn" href="09-persistence.html">← Previous phase</a><a class="nav-btn" href="11-testing.html">Next phase →</a></div>
+</div>
+</body>
+</html>

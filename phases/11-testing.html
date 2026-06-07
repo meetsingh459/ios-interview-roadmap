@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 11 — Testing · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 11 — Testing</h1>
+<p>SDE-2/3 candidates are expected to write testable code and explain a testing strategy. This is often where strong engineers stand out.</p>
+<hr>
+<h2 id="111-unit-testing-with-xctest">11.1 Unit Testing with XCTest</h2>
+<p><strong>Summary (easy):</strong> A unit test verifies one small piece of logic in isolation. XCTest provides <code>XCTestCase</code> subclasses, <code>setUp</code>/<code>tearDown</code>, and assertions (<code>XCTAssertEqual</code>, etc.). Follow Arrange–Act–Assert.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>final class CalculatorTests: XCTestCase {
+    func testAddition() {
+        let sut = Calculator()           <span class="cm">// Arrange</span>
+        let result = sut.add(2, 3)       <span class="cm">// Act</span>
+        XCTAssertEqual(result, 5)        <span class="cm">// Assert</span>
+    }
+}</code></pre>
+<p><strong>Interview angle:</strong> Know "SUT" (system under test), the FIRST principles (Fast, Isolated, Repeatable, Self-validating, Timely), and what makes a <em>good</em> unit test.</p>
+<p><strong>Resources:</strong> Apple — <em>XCTest</em>; Kodeco — "iOS Unit Testing and UI Testing Tutorial".</p>
+<hr>
+<h2 id="112-test-doubles-mocks-stubs-spies-fakes">11.2 Test Doubles: Mocks, Stubs, Spies, Fakes</h2>
+<p><strong>Summary (easy):</strong> Fake collaborators let you isolate the SUT. A <em>stub</em> returns canned values; a <em>mock</em> verifies interactions happened; a <em>spy</em> records calls; a <em>fake</em> is a lightweight working implementation (e.g., in-memory DB).</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>final class APIStub: APIClient {
+    var stubbedUsers: [User] = []
+    func fetchUsers() async -&gt; [User] { stubbedUsers }
+}</code></pre>
+<p><strong>Interview angle:</strong> Be able to define each term precisely and explain why DI (Phase 7) is what makes them possible.</p>
+<p><strong>Resources:</strong> Martin Fowler — "Mocks Aren't Stubs"; Swift by Sundell — "Mocking in Swift".</p>
+<hr>
+<h2 id="113-designing-for-testability-di-protocols-pure-functions">11.3 Designing for Testability (DI, protocols, pure functions)</h2>
+<p><strong>Summary (easy):</strong> Code is testable when dependencies are injectable and side effects are isolated. Hide collaborators behind protocols, push logic into pure functions, and avoid hidden global state/singletons.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code><span class="cm">// Inject a clock so time-based logic is deterministic</span>
+protocol Clock { func now() -&gt; Date }
+struct FixedClock: Clock { let date: Date; func now() -&gt; Date { date } }</code></pre>
+<p><strong>Interview angle:</strong> Expect "this class is hard to test — how would you refactor it?" Answer with DI, protocol abstraction, and separating I/O from logic.</p>
+<p><strong>Resources:</strong> Point-Free — testability episodes; "Working Effectively with Legacy Code" (Feathers).</p>
+<hr>
+<h2 id="114-testing-async-code-expectations--async-tests">11.4 Testing Async Code (expectations &amp; async tests)</h2>
+<p><strong>Summary (easy):</strong> For callback-based async, use <code>XCTestExpectation</code> and <code>wait(for:timeout:)</code>. For modern code, mark the test <code>async</code> and <code>await</code> directly.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func testLoad() async throws {
+    let vm = ProfileVM(api: APIStub())
+    await vm.load()
+    XCTAssertNotNil(vm.user)
+}</code></pre>
+<p><strong>Interview angle:</strong> Know both styles. Mention pitfalls: flaky tests from real timers/network → inject fakes and a controllable scheduler.</p>
+<p><strong>Resources:</strong> Apple — <em>Asynchronous tests and expectations</em>; WWDC async testing sessions.</p>
+<hr>
+<h2 id="115-ui-testing-xcuitest">11.5 UI Testing (XCUITest)</h2>
+<p><strong>Summary (easy):</strong> XCUITest drives the app like a user — taps, types, asserts elements exist. It uses accessibility identifiers to find elements. Slower and more brittle than unit tests, so use sparingly for critical flows.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let app = XCUIApplication(); app.launch()
+app.buttons["loginButton"].tap()
+XCTAssertTrue(app.staticTexts["Welcome"].exists)</code></pre>
+<p><strong>Interview angle:</strong> Know the test pyramid: many unit, fewer integration, fewest UI tests. Stable selectors via accessibility IDs.</p>
+<p><strong>Resources:</strong> Apple — <em>XCUITest</em>; Kodeco UI testing tutorial.</p>
+<hr>
+<h2 id="116-snapshot-testing-coverage--swift-testing">11.6 Snapshot Testing, Coverage &amp; Swift Testing</h2>
+<p><strong>Summary (easy):</strong> Snapshot tests render a view and compare it to a reference image to catch UI regressions. Code coverage shows which lines tests exercise. <em>Swift Testing</em> (the new framework) uses <code>@Test</code> and <code>#expect</code> macros — cleaner than XCTest.</p>
+<p><strong>Example (Swift Testing):</strong></p>
+<pre class="code" data-lang="swift"><code>import Testing
+@Test func addsNumbers() {
+    #expect(Calculator().add(2, 3) == 5)
+}</code></pre>
+<p><strong>Interview angle:</strong> Know that high coverage ≠ good tests (you can cover lines without asserting behavior). Be aware Swift Testing is the modern direction alongside XCTest.</p>
+<p><strong>Resources:</strong> WWDC24 "Meet Swift Testing"; pointfreeco/swift-snapshot-testing; Apple coverage docs.</p>
+<div class="pagenav"><a class="nav-btn" href="10-combine.html">← Previous phase</a><a class="nav-btn" href="12-performance.html">Next phase →</a></div>
+</div>
+</body>
+</html>

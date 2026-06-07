@@ -28,7 +28,7 @@ You have **two ways** to track how far you've come:
 **Option A — Interactive dashboard (recommended).** Open [`index.html`](index.html) for a visual board with an overall completion ring, per-phase progress bars, To-do / Done filters, and encouragement as you climb. Your checkmarks are saved automatically in your browser (`localStorage`) — no account, no backend.
 - **Online (GitHub Pages):** enable Pages (repo *Settings → Pages → deploy from `main` / root*). The dashboard is the **site homepage** — just visit `https://<your-username>.github.io/<repo-name>/` (served from `index.html`).
 - **Locally:** download the repo and open `index.html` in any browser.
-- When hosted on Pages, each "read detail ↗" link automatically opens the matching topic page rendered on github.com.
+- When hosted on Pages, each "read detail ↗" link opens a clean, styled HTML detail page (rendered from the same content as the markdown).
 - *(Note: progress is stored per-browser, so it won't sync between your laptop and phone.)*
 
 **Option B — Checkboxes in this README.** The roadmap below is a GitHub task list. Tick a box by editing the file (pencil icon on GitHub, or locally) — GitHub shows a live `x / total` count at the top of the list, and the state is committed to your repo so it syncs everywhere.

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 5 — UIKit Fundamentals · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 5 — UIKit Fundamentals</h1>
+<p>Even SwiftUI-heavy teams expect UIKit fluency at SDE-2/3. Lifecycle, Auto Layout, and table/collection views are perennial questions.</p>
+<hr>
+<h2 id="51-uiviewcontroller-lifecycle">5.1 UIViewController Lifecycle</h2>
+<p><strong>Summary (easy):</strong> A view controller goes through ordered callbacks as it appears and disappears. Knowing the order tells you where to put setup, layout, and teardown code.</p>
+<p><strong>Example (order):</strong></p>
+<pre class="code" data-lang="text"><code>init → loadView → viewDidLoad (once) →
+viewWillAppear → viewWillLayoutSubviews → viewDidLayoutSubviews →
+viewDidAppear → ... → viewWillDisappear → viewDidDisappear</code></pre>
+<p><strong>Interview angle:</strong> <code>viewDidLoad</code> runs once (do one-time setup); <code>viewWillAppear</code> can run many times (refresh data). Frame-dependent work belongs in <code>viewDidLayoutSubviews</code>, not <code>viewDidLoad</code>.</p>
+<p><strong>Resources:</strong> Apple — <em>UIViewController</em>; Use Your Loaf — "View controller lifecycle".</p>
+<hr>
+<h2 id="52-uiview-frame-vs-bounds-layer-coordinate-systems">5.2 UIView: frame vs bounds, layer, coordinate systems</h2>
+<p><strong>Summary (easy):</strong> <code>frame</code> is the view's position+size in its <em>parent's</em> coordinates. <code>bounds</code> is its own internal coordinate space (origin usually 0,0). Every view is backed by a <code>CALayer</code> that does the actual drawing.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>view.frame   <span class="cm">// e.g. (x:20, y:50, w:100, h:40) in superview</span>
+view.bounds  <span class="cm">// e.g. (x:0,  y:0,  w:100, h:40)</span>
+view.layer.cornerRadius = 8</code></pre>
+<p><strong>Interview angle:</strong> "What changes when you rotate a view 45°?" → <code>frame</code> grows (bounding box) but <code>bounds</code> stays the same. Great differentiator question.</p>
+<p><strong>Resources:</strong> Apple — <em>UIView</em>; "Frame vs Bounds" classic articles.</p>
+<hr>
+<h2 id="53-auto-layout-constraints-priorities-huggingcompression">5.3 Auto Layout (constraints, priorities, hugging/compression)</h2>
+<p><strong>Summary (easy):</strong> Auto Layout positions views with relationships (constraints) instead of fixed coordinates, so layouts adapt to screen sizes. Content hugging resists growing; compression resistance resists shrinking.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>label.translatesAutoresizingMaskIntoConstraints = false
+NSLayoutConstraint.activate([
+    label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+    label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+])</code></pre>
+<p><strong>Interview angle:</strong> Be ready to debug "Unable to simultaneously satisfy constraints," explain priorities (1–1000), and intrinsic content size.</p>
+<p><strong>Resources:</strong> Apple — <em>Auto Layout Guide</em>; Kodeco — "Auto Layout Tutorial".</p>
+<hr>
+<h2 id="54-stack-views">5.4 Stack Views</h2>
+<p><strong>Summary (easy):</strong> <code>UIStackView</code> arranges subviews in a row or column and manages their constraints for you (axis, spacing, distribution, alignment) — far less boilerplate.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let stack = UIStackView(arrangedSubviews: [icon, title])
+stack.axis = .horizontal; stack.spacing = 8; stack.alignment = .center</code></pre>
+<p><strong>Interview angle:</strong> Know <code>distribution</code> (.fill, .fillEqually, .equalSpacing) vs <code>alignment</code>. Stack views don't render anything themselves.</p>
+<p><strong>Resources:</strong> Apple — <em>UIStackView</em>; Use Your Loaf articles.</p>
+<hr>
+<h2 id="55-uitableview-reuse-delegatedatasource-diffable">5.5 UITableView (reuse, delegate/datasource, diffable)</h2>
+<p><strong>Summary (easy):</strong> Table views show scrolling lists efficiently by <em>reusing</em> cells (only ~visible ones exist). The datasource supplies cells/data; the delegate handles interaction. Diffable data sources animate changes safely.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func tableView(_ t: UITableView, cellForRowAt ip: IndexPath) -&gt; UITableViewCell {
+    let cell = t.dequeueReusableCell(withIdentifier: "Cell", for: ip)
+    cell.textLabel?.text = items[ip.row]
+    return cell
+}</code></pre>
+<p><strong>Interview angle:</strong> Explain cell reuse and why you must reset cell state in <code>prepareForReuse</code>. Know <code>NSDiffableDataSource</code> + snapshots over manual <code>reloadData</code>.</p>
+<p><strong>Resources:</strong> Apple — <em>UITableView</em> &amp; <em>Diffable Data Source</em>; WWDC19 "Advances in UI Data Sources".</p>
+<hr>
+<h2 id="56-uicollectionview--compositional-layout">5.6 UICollectionView &amp; Compositional Layout</h2>
+<p><strong>Summary (easy):</strong> Like a table view but for grids and arbitrary layouts. <code>UICollectionViewCompositionalLayout</code> composes items → groups → sections, making complex, responsive layouts declarative.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let item = NSCollectionLayoutItem(layoutSize: .init(
+    widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1)))
+<span class="cm">// item -&gt; group -&gt; section -&gt; layout</span></code></pre>
+<p><strong>Interview angle:</strong> Compositional layout + diffable data source is the modern combo. Be able to sketch a 2-column grid.</p>
+<p><strong>Resources:</strong> Apple — <em>Compositional Layout</em>; WWDC19/20 collection view sessions.</p>
+<hr>
+<h2 id="57-responder-chain--gesture-recognizers">5.7 Responder Chain &amp; Gesture Recognizers</h2>
+<p><strong>Summary (easy):</strong> Touch/events travel up a chain of responders (view → superview → VC → window → app) until something handles them. Gesture recognizers (tap, pan, pinch) detect higher-level gestures.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+view.addGestureRecognizer(tap)</code></pre>
+<p><strong>Interview angle:</strong> "How does <code>becomeFirstResponder</code> relate to the keyboard?" and "how do events propagate?" are common.</p>
+<p><strong>Resources:</strong> Apple — <em>Using Responders and the Responder Chain</em>.</p>
+<hr>
+<h2 id="58-navigation-presentation--programmatic-vs-storyboard-ui">5.8 Navigation, Presentation &amp; Programmatic vs Storyboard UI</h2>
+<p><strong>Summary (easy):</strong> <code>UINavigationController</code> manages a push/pop stack; modals are <em>presented</em>. UI can be built in Storyboards, XIBs, or fully in code — each with trade-offs.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>navigationController?.pushViewController(DetailVC(), animated: true)
+present(SettingsVC(), animated: true)</code></pre>
+<p><strong>Interview angle:</strong> "Storyboards vs programmatic?" → storyboards: visual, but merge conflicts &amp; hard to reuse; programmatic: verbose but explicit, reviewable, testable. Have an opinion.</p>
+<p><strong>Resources:</strong> Apple — <em>UINavigationController</em>; common "no storyboard" guides.</p>
+<hr>
+<h2 id="59-app--scene-lifecycle-run-loop">5.9 App &amp; Scene Lifecycle, Run Loop</h2>
+<p><strong>Summary (easy):</strong> An app moves through states (not running → inactive → active → background → suspended). Since iOS 13, <code>UIScene</code> supports multiple windows. The run loop keeps the main thread alive and processes events/timers.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func sceneDidBecomeActive(_ scene: UIScene) { resumeWork() }
+func sceneDidEnterBackground(_ scene: UIScene) { saveState() }</code></pre>
+<p><strong>Interview angle:</strong> Know where to save state (entering background), and the difference between <code>AppDelegate</code> and <code>SceneDelegate</code> responsibilities.</p>
+<p><strong>Resources:</strong> Apple — <em>Managing Your App's Life Cycle</em>; WWDC "Architecting Your App for Multiple Windows".</p>
+<div class="pagenav"><a class="nav-btn" href="04-concurrency.html">← Previous phase</a><a class="nav-btn" href="06-swiftui.html">Next phase →</a></div>
+</div>
+</body>
+</html>

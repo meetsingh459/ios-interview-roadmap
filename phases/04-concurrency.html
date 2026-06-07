@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 4 — Concurrency · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 4 — Concurrency</h1>
+<p>The single biggest differentiator for senior iOS interviews. Know both the classic stack (GCD/Operations) and modern Swift Concurrency (async/await, actors), and <em>why</em> the new model exists.</p>
+<hr>
+<h2 id="41-gcd--queues-syncasync-qos">4.1 GCD — Queues, sync/async, QoS</h2>
+<p><strong>Summary (easy):</strong> Grand Central Dispatch runs work on queues. Serial queues run one task at a time; concurrent queues run many. <code>async</code> schedules and returns immediately; <code>sync</code> blocks until done. QoS tells the system how important the work is.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>DispatchQueue.global(qos: .userInitiated).async {
+    let data = heavyWork()
+    DispatchQueue.main.async { updateUI(with: data) }
+}</code></pre>
+<p><strong>Interview angle:</strong> Never call <code>sync</code> on the current queue (deadlock). UI must update on the main queue. Know the QoS classes: userInteractive, userInitiated, default, utility, background.</p>
+<p><strong>Resources:</strong> Apple — <em>Dispatch</em>; Kodeco — "GCD Tutorial"; raywenderlich/Kodeco threading book.</p>
+<hr>
+<h2 id="42-dispatchgroup-semaphore-workitem-barrier">4.2 DispatchGroup, Semaphore, WorkItem, Barrier</h2>
+<p><strong>Summary (easy):</strong> <code>DispatchGroup</code> waits for several async tasks to all finish. <code>DispatchSemaphore</code> limits concurrent access to N. <code>DispatchWorkItem</code> is a cancelable unit of work. A <code>.barrier</code> flag makes a write block all reads on a concurrent queue (reader-writer lock).</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let group = DispatchGroup()
+for url in urls {
+    group.enter()
+    download(url) { group.leave() }
+}
+group.notify(queue: .main) { print("all done") }</code></pre>
+<p><strong>Interview angle:</strong> Classic question: build a thread-safe property using a concurrent queue + <code>.barrier</code> for writes and plain <code>.sync</code> for reads.</p>
+<p><strong>Resources:</strong> Apple — <em>DispatchGroup / DispatchSemaphore</em>; SwiftLee — "Concurrent vs serial".</p>
+<hr>
+<h2 id="43-operations--operationqueue">4.3 Operations &amp; OperationQueue</h2>
+<p><strong>Summary (easy):</strong> <code>Operation</code> is an object-oriented unit of work supporting dependencies, cancellation, priorities, and max-concurrent limits — a higher-level abstraction over GCD.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let queue = OperationQueue()
+queue.maxConcurrentOperationCount = 2
+let download = BlockOperation { /* fetch */ }
+let resize = BlockOperation { /* process */ }
+resize.addDependency(download)   <span class="cm">// resize waits for download</span>
+queue.addOperations([download, resize], waitUntilFinished: false)</code></pre>
+<p><strong>Interview angle:</strong> "GCD vs Operations?" → Operations give cancellation, dependencies, observable state; GCD is lighter for fire-and-forget.</p>
+<p><strong>Resources:</strong> Apple — <em>Operation / OperationQueue</em>; objc.io concurrency articles.</p>
+<hr>
+<h2 id="44-thread-safety-race-conditions-deadlocks-locks">4.4 Thread Safety: Race Conditions, Deadlocks, Locks</h2>
+<p><strong>Summary (easy):</strong> A race condition is two threads touching shared mutable state at the same time with unpredictable results. A deadlock is two threads each waiting on the other forever. Locks (<code>NSLock</code>, <code>os_unfair_lock</code>) or a serial queue prevent races.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>final class Counter {
+    private var value = 0
+    private let lock = NSLock()
+    func increment() { lock.lock(); value += 1; lock.unlock() }
+}</code></pre>
+<p><strong>Interview angle:</strong> Be able to <em>identify</em> a race and offer 2–3 fixes (serial queue, lock, actor). Mention Thread Sanitizer (TSan) for detecting them.</p>
+<p><strong>Resources:</strong> Apple — <em>Thread Safety</em>; WWDC "Thread Sanitizer and Static Analysis".</p>
+<hr>
+<h2 id="45-async--await">4.5 async / await</h2>
+<p><strong>Summary (easy):</strong> <code>async</code>/<code>await</code> lets you write asynchronous code that <em>reads</em> top-to-bottom like synchronous code. <code>await</code> is a suspension point — the thread is freed to do other work while waiting.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func loadProfile() async throws -&gt; Profile {
+    let data = try await URLSession.shared.data(from: url).0
+    return try JSONDecoder().decode(Profile.self, from: data)
+}</code></pre>
+<p><strong>Interview angle:</strong> Explain "suspension point" and how it differs from blocking a thread. Know how to call async code from a synchronous context with <code>Task { }</code>.</p>
+<p><strong>Resources:</strong> Apple — <em>Concurrency</em> (Swift book); WWDC21 "Meet async/await"; Donny Wals — async/await series.</p>
+<hr>
+<h2 id="46-tasks-task-groups--structured-concurrency">4.6 Tasks, Task Groups &amp; Structured Concurrency</h2>
+<p><strong>Summary (easy):</strong> A <code>Task</code> runs async work. Structured concurrency means child tasks are tied to a parent scope — if the parent is cancelled or finishes, children are handled automatically. <code>withTaskGroup</code> runs many child tasks in parallel and collects results.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>await withTaskGroup(of: Data.self) { group in
+    for url in urls { group.addTask { try? await fetch(url) } }
+    for await data in group { handle(data) }
+}</code></pre>
+<p><strong>Interview angle:</strong> Know <code>async let</code> for a few parallel calls vs task groups for a dynamic number. Know cooperative cancellation (<code>Task.checkCancellation()</code>).</p>
+<p><strong>Resources:</strong> WWDC21 "Explore structured concurrency in Swift"; Apple docs.</p>
+<hr>
+<h2 id="47-actors-mainactor--sendable">4.7 Actors, @MainActor &amp; Sendable</h2>
+<p><strong>Summary (easy):</strong> An <code>actor</code> protects its mutable state so only one task touches it at a time (no manual locks). <code>@MainActor</code> pins code/properties to the main thread (great for UI). <code>Sendable</code> marks types safe to pass across concurrency boundaries.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>actor BankAccount {
+    private var balance = 0
+    func deposit(_ x: Int) { balance += x }   <span class="cm">// automatically serialized</span>
+}
+@MainActor func updateLabel() { label.text = "done" }</code></pre>
+<p><strong>Interview angle:</strong> Explain "actor reentrancy" (state can change across an <code>await</code> inside an actor method) — a senior-level gotcha. Know why <code>@MainActor</code> replaces <code>DispatchQueue.main.async</code>.</p>
+<p><strong>Resources:</strong> WWDC21 "Protect mutable state with actors"; Apple — <em>Actors</em>; Swift 6 data-race safety docs.</p>
+<hr>
+<h2 id="48-asyncsequence-asyncstream--continuations">4.8 AsyncSequence, AsyncStream &amp; Continuations</h2>
+<p><strong>Summary (easy):</strong> <code>AsyncSequence</code> is a sequence you iterate with <code>for await</code>. <code>AsyncStream</code> lets you build one from callbacks/events. Continuations (<code>withCheckedContinuation</code>) bridge old completion-handler APIs into async/await.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func legacyToAsync() async -&gt; Data {
+    await withCheckedContinuation { cont in
+        oldAPI { data in cont.resume(returning: data) }
+    }
+}</code></pre>
+<p><strong>Interview angle:</strong> Bridging legacy callbacks is a very common real-world + interview task. Always resume a continuation exactly once.</p>
+<p><strong>Resources:</strong> WWDC21 "Meet AsyncSequence"; Apple — <em>Continuations</em>; Donny Wals articles.</p>
+<div class="pagenav"><a class="nav-btn" href="03-memory-management.html">← Previous phase</a><a class="nav-btn" href="05-uikit.html">Next phase →</a></div>
+</div>
+</body>
+</html>

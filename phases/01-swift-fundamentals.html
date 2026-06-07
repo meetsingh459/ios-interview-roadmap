@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 1 — Swift Language Fundamentals · iOS Interview Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;--bg2:#16140f;--card:#1b1812;--line:#2c2820;
+  --ink:#efe9dd;--muted:#9b9384;--faint:#6c6557;
+  --accent:#ff6a2b;--accent2:#ffb347;--done:#7bd88f;
+  --mono:'JetBrains Mono',monospace;--body:'IBM Plex Sans',sans-serif;--disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -8%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 92% 0%,rgba(255,179,71,.05),transparent 40%);
+  background-attachment:fixed;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+.back{display:inline-block;font-family:var(--mono);font-size:12.5px;color:var(--accent);text-decoration:none;
+  letter-spacing:.04em;margin:34px 0 8px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);transition:.15s}
+.back:hover{border-color:var(--accent);color:var(--accent2)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.08;
+  letter-spacing:-.01em;margin:22px 0 4px;color:var(--ink)}
+h2{font-family:var(--disp);font-weight:600;font-size:23px;margin:40px 0 4px;color:var(--accent2);
+  scroll-margin-top:20px;line-height:1.2}
+h2::before{content:"";display:block;height:1px;background:var(--line);margin-bottom:26px}
+h3{font-family:var(--mono);font-size:14px;letter-spacing:.02em;color:var(--ink);margin:22px 0 6px;text-transform:none}
+p{margin:13px 0;color:#ddd5c6}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:#241f17;color:#ffd9b8;
+  padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+pre.code{position:relative;background:#13110c;border:1px solid var(--line);border-radius:12px;
+  padding:18px 18px 16px;margin:14px 0;overflow-x:auto}
+pre.code code{background:none;border:none;padding:0;color:#e8e0d0;font-size:13px;line-height:1.6;white-space:pre}
+pre.code::after{content:attr(data-lang);position:absolute;top:9px;right:12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.cm{color:#7e8a6f;font-style:italic}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:46px;padding-top:24px;border-top:1px solid var(--line)}
+.nav-btn{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-decoration:none;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--ink)}
+::selection{background:var(--accent);color:#1a0d05}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← Back to dashboard</a>
+<h1>Phase 1 — Swift Language Fundamentals</h1>
+<p>The bedrock. Interviewers assume you know this cold, so they use it to probe depth ("why a struct here?", "what happens if this is nil?"). Don't skip it just because it looks basic.</p>
+<hr>
+<h2 id="11-variables-constants--type-inference">1.1 Variables, Constants &amp; Type Inference</h2>
+<p><strong>Summary (easy):</strong> <code>var</code> makes a value you can change, <code>let</code> makes one you can't. Swift usually figures out the type for you (type inference), but you can also write it explicitly.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>let name = "Aman"        <span class="cm">// inferred String, cannot change</span>
+var age = 30             <span class="cm">// inferred Int, can change</span>
+let pi: Double = 3.14159 <span class="cm">// explicit type</span></code></pre>
+<p><strong>Interview angle:</strong> Prefer <code>let</code> by default; only use <code>var</code> when mutation is needed. Shows intent and helps the compiler optimize.</p>
+<p><strong>Resources:</strong> Apple — <em>The Swift Programming Language: The Basics</em> (swift.org/documentation); Hacking with Swift — "How to create variables and constants" (hackingwithswift.com).</p>
+<hr>
+<h2 id="12-optionals-the-most-important-basic-topic">1.2 Optionals (the most important basic topic)</h2>
+<p><strong>Summary (easy):</strong> An optional is a box that either holds a value or holds nothing (<code>nil</code>). It forces you to handle the "no value" case so your app doesn't crash unexpectedly.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>var middleName: String? = nil          <span class="cm">// optional, currently empty</span>
+if let mid = middleName { print(mid) }  <span class="cm">// optional binding</span>
+let display = middleName ?? "N/A"       <span class="cm">// nil-coalescing</span>
+let count = middleName?.count           <span class="cm">// optional chaining -&gt; Int?</span></code></pre>
+<p><strong>Key sub-concepts:</strong> optional binding (<code>if let</code>, <code>guard let</code>), optional chaining (<code>?.</code>), nil-coalescing (<code>??</code>), force unwrap (<code>!</code> — dangerous), implicitly unwrapped optionals (<code>String!</code>).</p>
+<p><strong>Interview angle:</strong> Be ready to explain when force-unwrapping is acceptable (almost never in production; OK for <code>@IBOutlet</code> / programmer-error invariants) and the crash it causes otherwise.</p>
+<p><strong>Resources:</strong> Apple — <em>Optionals</em> chapter; Swift by Sundell — "The power of optionals"; Hacking with Swift — "Unwrapping optionals".</p>
+<hr>
+<h2 id="13-value-types-vs-reference-types-struct-vs-class">1.3 Value Types vs Reference Types (struct vs class)</h2>
+<p><strong>Summary (easy):</strong> A struct is <em>copied</em> when you assign or pass it (value type). A class is <em>shared</em> — both variables point to the same object (reference type). Picking the right one prevents whole categories of bugs.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>struct PointS { var x = 0 }
+class  PointC { var x = 0 }
+
+var a = PointS(); var b = a; b.x = 5   <span class="cm">// a.x == 0 (copy)</span>
+let c = PointC(); let d = c; d.x = 5   <span class="cm">// c.x == 5 (shared)</span></code></pre>
+<p><strong>Interview angle:</strong> "Why does Apple prefer structs?" → value semantics, thread-safety, no shared mutable state, no retain cycles. Use classes for identity, inheritance, or when you need reference semantics (e.g., a shared cache).</p>
+<p><strong>Resources:</strong> Apple — <em>Structures and Classes</em>; WWDC "Building Better Apps with Value Types"; Swift.org evolution discussions.</p>
+<hr>
+<h2 id="14-enums-associated--raw-values-indirect">1.4 Enums (associated &amp; raw values, indirect)</h2>
+<p><strong>Summary (easy):</strong> An enum is a type with a fixed set of cases. Cases can carry extra data (associated values) or map to fixed underlying values (raw values).</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>enum Result { case success(data: Data), failure(Error) }   <span class="cm">// associated</span>
+enum Suit: String { case heart = "♥", spade = "♠" }         <span class="cm">// raw value</span>
+indirect enum Tree { case leaf(Int), node(Tree, Tree) }     <span class="cm">// recursive</span></code></pre>
+<p><strong>Interview angle:</strong> Enums + <code>switch</code> give exhaustive, compile-checked state handling. Great answer to "how would you model loading/empty/error states?".</p>
+<p><strong>Resources:</strong> Apple — <em>Enumerations</em>; Hacking with Swift — "Enums with associated values".</p>
+<hr>
+<h2 id="15-closures-capture-escaping-trailing-autoclosure">1.5 Closures (capture, escaping, trailing, autoclosure)</h2>
+<p><strong>Summary (easy):</strong> A closure is a chunk of code you can store and pass around like a value. It "captures" variables from where it was created. <code>@escaping</code> means it may run later (after the function returns).</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func load(completion: @escaping (String) -&gt; Void) {
+    DispatchQueue.global().async { completion("done") }  <span class="cm">// escapes</span>
+}
+let nums = [3, 1, 2].sorted { $0 &lt; $1 }   <span class="cm">// trailing closure + shorthand args</span></code></pre>
+<p><strong>Key sub-concepts:</strong> capture lists <code>[weak self]</code>, <code>@escaping</code> vs non-escaping, <code>@autoclosure</code>, trailing closure syntax, shorthand argument names.</p>
+<p><strong>Interview angle:</strong> Expect "why <code>[weak self]</code> in this closure?" — see Phase 3 (memory). Know that non-escaping is the default and why it's cheaper.</p>
+<p><strong>Resources:</strong> Apple — <em>Closures</em>; Swift by Sundell — "Capturing objects in Swift closures".</p>
+<hr>
+<h2 id="16-functions-inout-variadic-defaults-labels">1.6 Functions (inout, variadic, defaults, labels)</h2>
+<p><strong>Summary (easy):</strong> Functions can have default parameter values, take a variable number of args (variadic), and modify a passed value with <code>inout</code>. Argument labels make call sites read like sentences.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func greet(_ name: String, with greeting: String = "Hi") { }
+func sum(_ nums: Int...) -&gt; Int { nums.reduce(0, +) }   <span class="cm">// variadic</span>
+func double(_ x: inout Int) { x *= 2 }                    <span class="cm">// inout</span></code></pre>
+<p><strong>Interview angle:</strong> <code>inout</code> is not pass-by-reference; it's copy-in/copy-out. Know the difference.</p>
+<p><strong>Resources:</strong> Apple — <em>Functions</em>; Hacking with Swift — "Variadic functions".</p>
+<hr>
+<h2 id="17-collections-array-set-dictionary">1.7 Collections (Array, Set, Dictionary)</h2>
+<p><strong>Summary (easy):</strong> Array = ordered list, Set = unordered unique items, Dictionary = key→value pairs. Sets and dictionary keys must be <code>Hashable</code>.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>var arr = [1, 2, 2]            <span class="cm">// [1, 2, 2]</span>
+var set: Set = [1, 2, 2]       <span class="cm">// {1, 2}</span>
+var dict = ["a": 1, "b": 2]
+arr.map { $0 * 2 }; arr.filter { $0 &gt; 1 }; arr.reduce(0, +)</code></pre>
+<p><strong>Interview angle:</strong> Know complexity: Set/Dictionary lookup is ~O(1), Array <code>contains</code> is O(n). Choosing the right collection is a frequent follow-up.</p>
+<p><strong>Resources:</strong> Apple — <em>Collection Types</em>; Swift Algorithms package docs.</p>
+<hr>
+<h2 id="18-control-flow-guard-defer-switch-pattern-matching">1.8 Control Flow: guard, defer, switch pattern matching</h2>
+<p><strong>Summary (easy):</strong> <code>guard</code> exits early if a condition fails (keeps the happy path un-indented). <code>defer</code> runs code when the scope ends, no matter how. <code>switch</code> in Swift can match patterns, ranges, and tuples.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func process(_ value: Int?) {
+    guard let v = value else { return }   <span class="cm">// early exit</span>
+    defer { print("cleanup") }            <span class="cm">// runs last</span>
+    switch v {
+    case 0: print("zero")
+    case 1...9: print("single digit")
+    default: print("big")
+    }
+}</code></pre>
+<p><strong>Interview angle:</strong> <code>guard</code> for preconditions reads better than nested <code>if</code>. <code>defer</code> is great for closing files / unlocking locks.</p>
+<p><strong>Resources:</strong> Apple — <em>Control Flow</em>; Hacking with Swift — "guard / defer".</p>
+<hr>
+<h2 id="19-error-handling-throws-try-result">1.9 Error Handling (throws, try, Result)</h2>
+<p><strong>Summary (easy):</strong> A function can <code>throw</code> an error; the caller handles it with <code>do/try/catch</code>. <code>Result&lt;Success, Failure&gt;</code> packages success-or-failure into a value (useful for async callbacks).</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>enum NetError: Error { case offline }
+func fetch() throws -&gt; Data { throw NetError.offline }
+
+do { let d = try fetch() }
+catch NetError.offline { print("no internet") }
+catch { print("other: \(error)") }
+
+let r: Result&lt;Int, Error&gt; = .success(5)</code></pre>
+<p><strong>Key sub-concepts:</strong> <code>try</code>, <code>try?</code>, <code>try!</code>, <code>throws</code>, <code>rethrows</code>, typed errors, <code>Result</code>.</p>
+<p><strong>Interview angle:</strong> Know the difference between <code>try?</code> (turns error into <code>nil</code>) and <code>try!</code> (crash on error).</p>
+<p><strong>Resources:</strong> Apple — <em>Error Handling</em>; Swift by Sundell — "Result type".</p>
+<hr>
+<h2 id="110-tuples--pattern-matching">1.10 Tuples &amp; Pattern Matching</h2>
+<p><strong>Summary (easy):</strong> A tuple groups several values into one without making a whole new type. Handy for returning multiple values or quick local grouping.</p>
+<p><strong>Example:</strong></p>
+<pre class="code" data-lang="swift"><code>func minMax(_ a: [Int]) -&gt; (min: Int, max: Int) { (a.min()!, a.max()!) }
+let result = minMax([3, 1, 8])
+print(result.max)   <span class="cm">// 8</span></code></pre>
+<p><strong>Interview angle:</strong> Tuples are great for tiny, local groupings; prefer a named struct once the group has meaning across your code.</p>
+<p><strong>Resources:</strong> Apple — <em>Tuples</em> (in The Basics); Hacking with Swift — "Tuples".</p>
+<div class="pagenav"><span></span><a class="nav-btn" href="02-swift-type-system.html">Next phase →</a></div>
+</div>
+</body>
+</html>
