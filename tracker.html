@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iOS Interview Roadmap · Progress Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b; --bg2:#16140f; --card:#1b1812; --line:#2c2820;
+  --ink:#efe9dd; --muted:#9b9384; --faint:#6c6557;
+  --accent:#ff6a2b; --accent2:#ffb347; --done:#7bd88f;
+  --mono:'JetBrains Mono',monospace; --body:'IBM Plex Sans',sans-serif; --disp:'Fraunces',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--body);
+  line-height:1.5; padding:0 0 80px;
+  background-image:radial-gradient(circle at 12% -10%,rgba(255,106,43,.10),transparent 42%),radial-gradient(circle at 90% 0%,rgba(255,179,71,.06),transparent 40%);
+  background-attachment:fixed;
+}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px}
+
+/* ---- Header ---- */
+header{padding:54px 0 30px;border-bottom:1px solid var(--line);margin-bottom:30px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+h1{font-family:var(--disp);font-weight:600;font-size:clamp(32px,6vw,52px);line-height:1.04;letter-spacing:-.01em;margin-bottom:8px}
+h1 em{font-style:italic;color:var(--accent2)}
+.sub{color:var(--muted);max-width:560px;font-size:15px}
+
+/* ---- Overview ---- */
+.overview{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:center;
+  background:linear-gradient(180deg,var(--bg2),var(--card));border:1px solid var(--line);
+  border-radius:18px;padding:26px 30px;margin:28px 0 14px}
+.ring{position:relative;width:118px;height:118px}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .pct b{font-family:var(--disp);font-size:30px;font-weight:700;line-height:1}
+.ring .pct span{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:3px}
+.ov-stats{display:flex;flex-direction:column;gap:14px;min-width:0}
+.ov-line{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.ov-line b{color:var(--ink);font-size:15px}
+.ov-line .accent{color:var(--accent2)}
+.bigbar{height:12px;background:#221f18;border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.bigbar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s cubic-bezier(.2,.7,.2,1)}
+.encourage{font-size:13px;color:var(--faint);font-style:italic}
+
+/* ---- Controls ---- */
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:20px 0 8px}
+.seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--muted);background:none;border:none;padding:7px 13px;border-radius:7px;cursor:pointer;transition:.15s}
+.seg button.on{background:var(--accent);color:#1a0d05;font-weight:700}
+.seg button:hover:not(.on){color:var(--ink)}
+.btn{font-family:var(--mono);font-size:12px;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:8px 13px;border-radius:9px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--accent);color:var(--ink)}
+.spacer{flex:1}
+.linkcfg{display:flex;align-items:center;gap:8px;width:100%;margin-top:6px}
+.linkcfg input{flex:1;background:var(--bg2);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:12px;padding:8px 11px;border-radius:9px}
+.linkcfg input::placeholder{color:var(--faint)}
+.linkcfg label{font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap}
+
+/* ---- Phase ---- */
+.phase{margin:24px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.phead{display:flex;align-items:center;gap:16px;padding:18px 22px;cursor:pointer;user-select:none;transition:background .15s}
+.phead:hover{background:var(--bg2)}
+.pnum{font-family:var(--mono);font-size:12px;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:5px 9px;background:var(--bg);white-space:nowrap}
+.ptitle{font-family:var(--disp);font-size:20px;font-weight:600;flex:1;min-width:0}
+.pmeta{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.pbar{width:74px;height:7px;background:#221f18;border-radius:99px;overflow:hidden}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
+.pbar.full i{background:var(--done)}
+.chev{color:var(--faint);transition:transform .2s;font-family:var(--mono)}
+.phase.collapsed .chev{transform:rotate(-90deg)}
+.phase.collapsed .plist{display:none}
+.plist{border-top:1px solid var(--line)}
+.topic{display:flex;align-items:flex-start;gap:13px;padding:13px 22px;border-bottom:1px solid rgba(44,40,32,.55);transition:background .12s}
+.topic:last-child{border-bottom:none}
+.topic:hover{background:var(--bg2)}
+.cb{appearance:none;-webkit-appearance:none;flex:0 0 20px;width:20px;height:20px;margin-top:2px;border:1.6px solid var(--faint);border-radius:6px;cursor:pointer;position:relative;transition:.15s;background:var(--bg)}
+.cb:hover{border-color:var(--accent)}
+.cb:checked{background:var(--done);border-color:var(--done)}
+.cb:checked::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #11160f;border-width:0 2.4px 2.4px 0;transform:rotate(43deg)}
+.tbody{flex:1;min-width:0}
+.tname{font-size:14.5px;color:var(--ink);transition:.15s}
+.topic.done .tname{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--faint)}
+.tlink{font-family:var(--mono);font-size:11px;color:var(--accent);text-decoration:none;opacity:.0;transition:.15s}
+.topic:hover .tlink{opacity:.85}
+.tlink:hover{text-decoration:underline}
+footer{text-align:center;color:var(--faint);font-family:var(--mono);font-size:11.5px;margin-top:40px;letter-spacing:.04em}
+footer a{color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--accent);color:#1a0d05;font-family:var(--mono);font-size:12px;font-weight:700;padding:11px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:560px){
+  .overview{grid-template-columns:1fr;text-align:center;justify-items:center}
+  .ov-stats{width:100%}
+  .ptitle{font-size:17px}.pbar{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">SDE-2 / SDE-3 · iOS Domain Prep</div>
+    <h1>iOS Interview<br>Roadmap <em>Tracker</em></h1>
+    <p class="sub">Tick each topic as you can explain it out loud and write the example from memory. Your progress is saved automatically in this browser.</p>
+
+    <div class="overview">
+      <div class="ring">
+        <svg width="118" height="118" viewBox="0 0 118 118">
+          <circle cx="59" cy="59" r="50" fill="none" stroke="#221f18" stroke-width="11"/>
+          <circle id="ringFill" cx="59" cy="59" r="50" fill="none" stroke="url(#g)" stroke-width="11" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16"/>
+          <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ff6a2b"/><stop offset="1" stop-color="#ffb347"/>
+          </linearGradient></defs>
+        </svg>
+        <div class="pct"><b id="pctNum">0%</b><span>complete</span></div>
+      </div>
+      <div class="ov-stats">
+        <div class="ov-line"><b id="doneCount">0</b> of <b id="totalCount">0</b> topics done · <span class="accent" id="phaseDone">0/14 phases</span></div>
+        <div class="bigbar"><i id="bigFill"></i></div>
+        <div class="encourage" id="encourage">Let's begin. Phase 1 is waiting.</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="seg" id="filter">
+        <button data-f="all" class="on">All</button>
+        <button data-f="todo">To-do</button>
+        <button data-f="done">Done</button>
+      </div>
+      <button class="btn" id="expandAll">Expand all</button>
+      <button class="btn" id="collapseAll">Collapse all</button>
+      <div class="spacer"></div>
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="resetBtn">Reset</button>
+      <div class="linkcfg">
+        <label>Topic links →</label>
+        <input id="baseUrl" placeholder="Paste your GitHub Pages/repo base URL to make topic links open the detail pages (optional)">
+      </div>
+    </div>
+  </header>
+
+  <main id="phases"></main>
+
+  <footer>
+    Progress stored locally via your browser · <a href="README.md">Back to roadmap README</a>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = [{"phase":"Phase 1 \u2014 Swift Language Fundamentals","file":"phases/01-swift-fundamentals.md","topics":[{"t":"1.1 Variables, Constants & Type Inference","u":"phases/01-swift-fundamentals.md#11-variables-constants--type-inference"},{"t":"1.2 Optionals (the most important basic topic)","u":"phases/01-swift-fundamentals.md#12-optionals-the-most-important-basic-topic"},{"t":"1.3 Value Types vs Reference Types (struct vs class)","u":"phases/01-swift-fundamentals.md#13-value-types-vs-reference-types-struct-vs-class"},{"t":"1.4 Enums (associated & raw values, indirect)","u":"phases/01-swift-fundamentals.md#14-enums-associated--raw-values-indirect"},{"t":"1.5 Closures (capture, escaping, trailing, autoclosure)","u":"phases/01-swift-fundamentals.md#15-closures-capture-escaping-trailing-autoclosure"},{"t":"1.6 Functions (inout, variadic, defaults, labels)","u":"phases/01-swift-fundamentals.md#16-functions-inout-variadic-defaults-labels"},{"t":"1.7 Collections (Array, Set, Dictionary)","u":"phases/01-swift-fundamentals.md#17-collections-array-set-dictionary"},{"t":"1.8 Control Flow: guard, defer, switch pattern matching","u":"phases/01-swift-fundamentals.md#18-control-flow-guard-defer-switch-pattern-matching"},{"t":"1.9 Error Handling (throws, try, Result)","u":"phases/01-swift-fundamentals.md#19-error-handling-throws-try-result"},{"t":"1.10 Tuples & Pattern Matching","u":"phases/01-swift-fundamentals.md#110-tuples--pattern-matching"}]},{"phase":"Phase 2 \u2014 Intermediate Swift & The Type System","file":"phases/02-swift-type-system.md","topics":[{"t":"2.1 Protocols & Protocol-Oriented Programming (POP)","u":"phases/02-swift-type-system.md#21-protocols--protocol-oriented-programming-pop"},{"t":"2.2 Protocol Extensions & Default Implementations","u":"phases/02-swift-type-system.md#22-protocol-extensions--default-implementations"},{"t":"2.3 Generics (constraints, where clauses)","u":"phases/02-swift-type-system.md#23-generics-constraints-where-clauses"},{"t":"2.4 Associated Types","u":"phases/02-swift-type-system.md#24-associated-types"},{"t":"2.5 Opaque Types (`some`) vs Existentials (`any`)","u":"phases/02-swift-type-system.md#25-opaque-types-some-vs-existentials-any"},{"t":"2.6 Property Wrappers","u":"phases/02-swift-type-system.md#26-property-wrappers"},{"t":"2.7 Codable (Encoding & Decoding)","u":"phases/02-swift-type-system.md#27-codable-encoding--decoding"},{"t":"2.8 Equatable, Hashable, Comparable, Identifiable","u":"phases/02-swift-type-system.md#28-equatable-hashable-comparable-identifiable"},{"t":"2.9 Type Casting & `Any`/`AnyObject`","u":"phases/02-swift-type-system.md#29-type-casting--anyanyobject"},{"t":"2.10 Extensions, Computed Properties & Observers","u":"phases/02-swift-type-system.md#210-extensions-computed-properties--observers"}]},{"phase":"Phase 3 \u2014 Memory Management (ARC)","file":"phases/03-memory-management.md","topics":[{"t":"3.1 ARC \u2014 Automatic Reference Counting","u":"phases/03-memory-management.md#31-arc--automatic-reference-counting"},{"t":"3.2 strong / weak / unowned","u":"phases/03-memory-management.md#32-strong--weak--unowned"},{"t":"3.3 Retain Cycles (memory leaks)","u":"phases/03-memory-management.md#33-retain-cycles-memory-leaks"},{"t":"3.4 Capture Lists in Closures ([weak self] / [unowned self])","u":"phases/03-memory-management.md#34-capture-lists-in-closures-weak-self--unowned-self"},{"t":"3.5 Value Semantics & Copy-on-Write (COW)","u":"phases/03-memory-management.md#35-value-semantics--copy-on-write-cow"},{"t":"3.6 Stack vs Heap, autoreleasepool, Memory Graph Debugger","u":"phases/03-memory-management.md#36-stack-vs-heap-autoreleasepool-memory-graph-debugger"}]},{"phase":"Phase 4 \u2014 Concurrency","file":"phases/04-concurrency.md","topics":[{"t":"4.1 GCD \u2014 Queues, sync/async, QoS","u":"phases/04-concurrency.md#41-gcd--queues-syncasync-qos"},{"t":"4.2 DispatchGroup, Semaphore, WorkItem, Barrier","u":"phases/04-concurrency.md#42-dispatchgroup-semaphore-workitem-barrier"},{"t":"4.3 Operations & OperationQueue","u":"phases/04-concurrency.md#43-operations--operationqueue"},{"t":"4.4 Thread Safety: Race Conditions, Deadlocks, Locks","u":"phases/04-concurrency.md#44-thread-safety-race-conditions-deadlocks-locks"},{"t":"4.5 async / await","u":"phases/04-concurrency.md#45-async--await"},{"t":"4.6 Tasks, Task Groups & Structured Concurrency","u":"phases/04-concurrency.md#46-tasks-task-groups--structured-concurrency"},{"t":"4.7 Actors, @MainActor & Sendable","u":"phases/04-concurrency.md#47-actors-mainactor--sendable"},{"t":"4.8 AsyncSequence, AsyncStream & Continuations","u":"phases/04-concurrency.md#48-asyncsequence-asyncstream--continuations"}]},{"phase":"Phase 5 \u2014 UIKit Fundamentals","file":"phases/05-uikit.md","topics":[{"t":"5.1 UIViewController Lifecycle","u":"phases/05-uikit.md#51-uiviewcontroller-lifecycle"},{"t":"5.2 UIView: frame vs bounds, layer, coordinate systems","u":"phases/05-uikit.md#52-uiview-frame-vs-bounds-layer-coordinate-systems"},{"t":"5.3 Auto Layout (constraints, priorities, hugging/compression)","u":"phases/05-uikit.md#53-auto-layout-constraints-priorities-huggingcompression"},{"t":"5.4 Stack Views","u":"phases/05-uikit.md#54-stack-views"},{"t":"5.5 UITableView (reuse, delegate/datasource, diffable)","u":"phases/05-uikit.md#55-uitableview-reuse-delegatedatasource-diffable"},{"t":"5.6 UICollectionView & Compositional Layout","u":"phases/05-uikit.md#56-uicollectionview--compositional-layout"},{"t":"5.7 Responder Chain & Gesture Recognizers","u":"phases/05-uikit.md#57-responder-chain--gesture-recognizers"},{"t":"5.8 Navigation, Presentation & Programmatic vs Storyboard UI","u":"phases/05-uikit.md#58-navigation-presentation--programmatic-vs-storyboard-ui"},{"t":"5.9 App & Scene Lifecycle, Run Loop","u":"phases/05-uikit.md#59-app--scene-lifecycle-run-loop"}]},{"phase":"Phase 6 \u2014 SwiftUI","file":"phases/06-swiftui.md","topics":[{"t":"6.1 Declarative UI, the View protocol & body","u":"phases/06-swiftui.md#61-declarative-ui-the-view-protocol--body"},{"t":"6.2 @State & @Binding","u":"phases/06-swiftui.md#62-state--binding"},{"t":"6.3 @StateObject vs @ObservedObject vs @EnvironmentObject","u":"phases/06-swiftui.md#63-stateobject-vs-observedobject-vs-environmentobject"},{"t":"6.4 The Observation framework (@Observable, iOS 17+)","u":"phases/06-swiftui.md#64-the-observation-framework-observable-ios-17"},{"t":"6.5 @Environment & Dependency Injection in SwiftUI","u":"phases/06-swiftui.md#65-environment--dependency-injection-in-swiftui"},{"t":"6.6 Layout System (stacks, GeometryReader, alignment, layout protocol)","u":"phases/06-swiftui.md#66-layout-system-stacks-geometryreader-alignment-layout-protocol"},{"t":"6.7 Lists, ForEach & Identifiable","u":"phases/06-swiftui.md#67-lists-foreach--identifiable"},{"t":"6.8 Navigation (NavigationStack & NavigationPath)","u":"phases/06-swiftui.md#68-navigation-navigationstack--navigationpath"},{"t":"6.9 Modifiers, Animations & Transitions","u":"phases/06-swiftui.md#69-modifiers-animations--transitions"},{"t":"6.10 UIKit \u2194 SwiftUI Interoperability","u":"phases/06-swiftui.md#610-uikit--swiftui-interoperability"}]},{"phase":"Phase 7 \u2014 Architecture & Design Patterns","file":"phases/07-architecture.md","topics":[{"t":"7.1 MVC, MVP, MVVM, VIPER, Clean, TCA","u":"phases/07-architecture.md#71-mvc-mvp-mvvm-viper-clean-tca"},{"t":"7.2 Delegation Pattern","u":"phases/07-architecture.md#72-delegation-pattern"},{"t":"7.3 Observer Pattern: NotificationCenter & KVO","u":"phases/07-architecture.md#73-observer-pattern-notificationcenter--kvo"},{"t":"7.4 Singleton (and its pitfalls)","u":"phases/07-architecture.md#74-singleton-and-its-pitfalls"},{"t":"7.5 Dependency Injection (DI)","u":"phases/07-architecture.md#75-dependency-injection-di"},{"t":"7.6 Coordinator Pattern","u":"phases/07-architecture.md#76-coordinator-pattern"},{"t":"7.7 Factory, Builder, Adapter, Strategy, Repository","u":"phases/07-architecture.md#77-factory-builder-adapter-strategy-repository"},{"t":"7.8 SOLID Principles & Composition over Inheritance","u":"phases/07-architecture.md#78-solid-principles--composition-over-inheritance"}]},{"phase":"Phase 8 \u2014 Networking","file":"phases/08-networking.md","topics":[{"t":"8.1 URLSession Basics (data / download / upload tasks)","u":"phases/08-networking.md#81-urlsession-basics-data--download--upload-tasks"},{"t":"8.2 REST, HTTP Methods & Status Codes","u":"phases/08-networking.md#82-rest-http-methods--status-codes"},{"t":"8.3 JSON Parsing with Codable + Error Handling","u":"phases/08-networking.md#83-json-parsing-with-codable--error-handling"},{"t":"8.4 Authentication (tokens, OAuth, JWT, refresh)","u":"phases/08-networking.md#84-authentication-tokens-oauth-jwt-refresh"},{"t":"8.5 Caching (URLCache) & Conditional Requests","u":"phases/08-networking.md#85-caching-urlcache--conditional-requests"},{"t":"8.6 WebSockets & Streaming","u":"phases/08-networking.md#86-websockets--streaming"},{"t":"8.7 Networking Libraries & Security (Alamofire, certificate pinning)","u":"phases/08-networking.md#87-networking-libraries--security-alamofire-certificate-pinning"}]},{"phase":"Phase 9 \u2014 Persistence & Data Storage","file":"phases/09-persistence.md","topics":[{"t":"9.1 UserDefaults","u":"phases/09-persistence.md#91-userdefaults"},{"t":"9.2 Keychain","u":"phases/09-persistence.md#92-keychain"},{"t":"9.3 File System (FileManager)","u":"phases/09-persistence.md#93-file-system-filemanager"},{"t":"9.4 Core Data (stack, contexts, fetch, concurrency)","u":"phases/09-persistence.md#94-core-data-stack-contexts-fetch-concurrency"},{"t":"9.5 SwiftData (iOS 17+)","u":"phases/09-persistence.md#95-swiftdata-ios-17"},{"t":"9.6 SQLite / GRDB / Realm (awareness)","u":"phases/09-persistence.md#96-sqlite--grdb--realm-awareness"},{"t":"9.7 Migration Strategies","u":"phases/09-persistence.md#97-migration-strategies"}]},{"phase":"Phase 10 \u2014 Combine & Reactive Programming","file":"phases/10-combine.md","topics":[{"t":"10.1 Publishers, Subscribers & the Combine Model","u":"phases/10-combine.md#101-publishers-subscribers--the-combine-model"},{"t":"10.2 @Published & ObservableObject","u":"phases/10-combine.md#102-published--observableobject"},{"t":"10.3 Subjects (PassthroughSubject, CurrentValueSubject)","u":"phases/10-combine.md#103-subjects-passthroughsubject-currentvaluesubject"},{"t":"10.4 Operators (map, flatMap, combineLatest, merge, zip, debounce)","u":"phases/10-combine.md#104-operators-map-flatmap-combinelatest-merge-zip-debounce"},{"t":"10.5 Cancellables & Memory Management in Combine","u":"phases/10-combine.md#105-cancellables--memory-management-in-combine"},{"t":"10.6 Schedulers, Error Handling & Combine vs async/await","u":"phases/10-combine.md#106-schedulers-error-handling--combine-vs-asyncawait"}]},{"phase":"Phase 11 \u2014 Testing","file":"phases/11-testing.md","topics":[{"t":"11.1 Unit Testing with XCTest","u":"phases/11-testing.md#111-unit-testing-with-xctest"},{"t":"11.2 Test Doubles: Mocks, Stubs, Spies, Fakes","u":"phases/11-testing.md#112-test-doubles-mocks-stubs-spies-fakes"},{"t":"11.3 Designing for Testability (DI, protocols, pure functions)","u":"phases/11-testing.md#113-designing-for-testability-di-protocols-pure-functions"},{"t":"11.4 Testing Async Code (expectations & async tests)","u":"phases/11-testing.md#114-testing-async-code-expectations--async-tests"},{"t":"11.5 UI Testing (XCUITest)","u":"phases/11-testing.md#115-ui-testing-xcuitest"},{"t":"11.6 Snapshot Testing, Coverage & Swift Testing","u":"phases/11-testing.md#116-snapshot-testing-coverage--swift-testing"}]},{"phase":"Phase 12 \u2014 Performance & Optimization","file":"phases/12-performance.md","topics":[{"t":"12.1 Instruments (Time Profiler, Allocations, Leaks, Core Animation)","u":"phases/12-performance.md#121-instruments-time-profiler-allocations-leaks-core-animation"},{"t":"12.2 Main Thread Hygiene & Avoiding Blocking","u":"phases/12-performance.md#122-main-thread-hygiene--avoiding-blocking"},{"t":"12.3 List/Collection Performance (reuse, prefetching, sizing)","u":"phases/12-performance.md#123-listcollection-performance-reuse-prefetching-sizing"},{"t":"12.4 Image & Asset Optimization","u":"phases/12-performance.md#124-image--asset-optimization"},{"t":"12.5 App Launch Time Optimization","u":"phases/12-performance.md#125-app-launch-time-optimization"},{"t":"12.6 Build Time & Compiler Optimization","u":"phases/12-performance.md#126-build-time--compiler-optimization"}]},{"phase":"Phase 13 \u2014 App Lifecycle, Tooling & Release","file":"phases/13-lifecycle-tooling-release.md","topics":[{"t":"13.1 App States & Background Execution","u":"phases/13-lifecycle-tooling-release.md#131-app-states--background-execution"},{"t":"13.2 Push & Local Notifications","u":"phases/13-lifecycle-tooling-release.md#132-push--local-notifications"},{"t":"13.3 Deep Linking & Universal Links","u":"phases/13-lifecycle-tooling-release.md#133-deep-linking--universal-links"},{"t":"13.4 Code Signing, Provisioning & Certificates","u":"phases/13-lifecycle-tooling-release.md#134-code-signing-provisioning--certificates"},{"t":"13.5 CI/CD (Fastlane, Xcode Cloud)","u":"phases/13-lifecycle-tooling-release.md#135-cicd-fastlane-xcode-cloud"},{"t":"13.6 App Store, TestFlight, Crash Reporting & Feature Flags","u":"phases/13-lifecycle-tooling-release.md#136-app-store-testflight-crash-reporting--feature-flags"},{"t":"13.7 App Thinning, Bitcode & App Size","u":"phases/13-lifecycle-tooling-release.md#137-app-thinning-bitcode--app-size"}]},{"phase":"Phase 14 \u2014 Advanced & Niche Topics","file":"phases/14-advanced.md","topics":[{"t":"14.1 Method Dispatch (static, dynamic, witness table, vtable)","u":"phases/14-advanced.md#141-method-dispatch-static-dynamic-witness-table-vtable"},{"t":"14.2 Objective-C Interop (@objc, dynamic, bridging)","u":"phases/14-advanced.md#142-objective-c-interop-objc-dynamic-bridging"},{"t":"14.3 Method Swizzling & the Runtime","u":"phases/14-advanced.md#143-method-swizzling--the-runtime"},{"t":"14.4 Result Builders (@resultBuilder)","u":"phases/14-advanced.md#144-result-builders-resultbuilder"},{"t":"14.5 Macros (Swift 5.9+)","u":"phases/14-advanced.md#145-macros-swift-59"},{"t":"14.6 Modules, Frameworks & Swift Package Manager","u":"phases/14-advanced.md#146-modules-frameworks--swift-package-manager"},{"t":"14.7 Accessibility (VoiceOver, Dynamic Type)","u":"phases/14-advanced.md#147-accessibility-voiceover-dynamic-type"},{"t":"14.8 Localization, Security & Reflection","u":"phases/14-advanced.md#148-localization-security--reflection"}]}];
+const KEY = 'ios-roadmap-progress-v1';
+const COLLAPSE_KEY = 'ios-roadmap-collapsed-v1';
+const BASEKEY = 'ios-roadmap-baseurl-v1';
+
+let done = new Set();
+let collapsed = new Set();
+let filter = 'all';
+try { done = new Set(JSON.parse(localStorage.getItem(KEY)||'[]')); } catch(e){}
+try { collapsed = new Set(JSON.parse(localStorage.getItem(COLLAPSE_KEY)||'[]')); } catch(e){}
+let baseUrl = localStorage.getItem(BASEKEY) || '';
+
+const total = DATA.reduce((n,p)=>n+p.topics.length,0);
+const $ = s=>document.querySelector(s);
+const save = ()=>{ try{ localStorage.setItem(KEY, JSON.stringify([...done])); }catch(e){} };
+const saveCollapse = ()=>{ try{ localStorage.setItem(COLLAPSE_KEY, JSON.stringify([...collapsed])); }catch(e){} };
+
+function linkFor(u){
+  if(!baseUrl) return u;
+  let b = baseUrl.replace(/\/+$/,'');
+  // If Pages-style, swap .md for .html (Jekyll renders md->html)
+  return b + '/' + u;
+}
+
+function render(){
+  const host = $('#phases'); host.innerHTML='';
+  DATA.forEach((p,pi)=>{
+    const ids = p.topics.map(t=>t.u);
+    const d = ids.filter(u=>done.has(u)).length;
+    const isCol = collapsed.has(String(pi));
+    const sec = document.createElement('section');
+    sec.className = 'phase'+(isCol?' collapsed':'');
+    const m = p.phase.match(/Phase\s+(\d+)\s*—\s*(.*)/) || [null,String(pi+1),p.phase];
+    let rows = p.topics.map(t=>{
+      const isDone = done.has(t.u);
+      const show = filter==='all' || (filter==='done'&&isDone) || (filter==='todo'&&!isDone);
+      if(!show) return '';
+      return `<div class="topic${isDone?' done':''}">
+        <input class="cb" type="checkbox" data-u="${t.u}" ${isDone?'checked':''}>
+        <div class="tbody">
+          <div class="tname">${t.t}</div>
+          <a class="tlink" href="${linkFor(t.u)}" target="_blank" rel="noopener">read detail ↗</a>
+        </div></div>`;
+    }).join('');
+    sec.innerHTML = `
+      <div class="phead" data-pi="${pi}">
+        <span class="pnum">P${m[1]}</span>
+        <span class="ptitle">${m[2]}</span>
+        <span class="pmeta">${d}/${p.topics.length}</span>
+        <span class="pbar${d===p.topics.length?' full':''}"><i style="width:${p.topics.length?d/p.topics.length*100:0}%"></i></span>
+        <span class="chev">▾</span>
+      </div>
+      <div class="plist">${rows||'<div class="topic"><div class="tbody"><div class="tname" style="color:var(--faint)">Nothing to show in this filter.</div></div></div>'}</div>`;
+    host.appendChild(sec);
+  });
+  bindRows();
+  updateOverview();
+}
+
+function bindRows(){
+  document.querySelectorAll('.cb').forEach(cb=>{
+    cb.addEventListener('change',()=>{
+      const u=cb.dataset.u;
+      cb.checked?done.add(u):done.delete(u);
+      save(); render();
+    });
+  });
+  document.querySelectorAll('.phead').forEach(h=>{
+    h.addEventListener('click',e=>{
+      if(e.target.classList.contains('cb'))return;
+      const pi=h.dataset.pi;
+      collapsed.has(pi)?collapsed.delete(pi):collapsed.add(pi);
+      saveCollapse();
+      h.parentElement.classList.toggle('collapsed');
+    });
+  });
+}
+
+function updateOverview(){
+  const d=done.size, pct=total?Math.round(d/total*100):0;
+  $('#pctNum').textContent=pct+'%';
+  $('#doneCount').textContent=d;
+  $('#totalCount').textContent=total;
+  $('#bigFill').style.width=pct+'%';
+  const C=314.16; $('#ringFill').style.strokeDashoffset=C-(C*pct/100);
+  const phasesDone=DATA.filter(p=>p.topics.every(t=>done.has(t.u))).length;
+  $('#phaseDone').textContent=phasesDone+'/14 phases';
+  const msgs=[
+    'Let\'s begin. Phase 1 is waiting.',
+    'Momentum building — keep going.',
+    'Solid progress. The fundamentals are sticking.',
+    'Over a quarter done. You\'re ahead of most.',
+    'Halfway. The hard middle is where senior depth shows.',
+    'Two-thirds in — concurrency & architecture pay off in interviews.',
+    'Almost there. Polish the advanced topics.',
+    'Interview-ready. Do a final pass out loud. 🎯'
+  ];
+  $('#encourage').textContent = pct>=100?msgs[7]:msgs[Math.min(6,Math.floor(pct/14))];
+}
+
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1700);}
+
+$('#filter').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  filter=e.target.dataset.f;
+  [...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));
+  render();
+});
+$('#expandAll').addEventListener('click',()=>{collapsed.clear();saveCollapse();render();});
+$('#collapseAll').addEventListener('click',()=>{DATA.forEach((_,i)=>collapsed.add(String(i)));saveCollapse();render();});
+$('#resetBtn').addEventListener('click',()=>{
+  if(confirm('Reset all progress? This clears every checkmark.')){done.clear();save();render();toast('Progress reset');}
+});
+$('#exportBtn').addEventListener('click',()=>{
+  const text=JSON.stringify([...done]);
+  navigator.clipboard?.writeText(text).then(()=>toast('Progress copied to clipboard'),()=>prompt('Copy your progress:',text));
+});
+const base=$('#baseUrl'); base.value=baseUrl;
+base.addEventListener('input',()=>{baseUrl=base.value.trim();localStorage.setItem(BASEKEY,baseUrl);render();});
+
+render();
+</script>
+</body>
+</html>
